@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static("public"))
 
 app.get("/", (req, res) => {
-  res.sendStatus(501) //TODO
+  res.sendFile(path.join(__dirname, "./public/home.html"))
 })
 
 app.get("/login", (req, res) => {
@@ -32,6 +32,10 @@ app.get("/signup", (req, res) => {
 app.post("/signup", (req, res) => {
   console.log(req.body)
   res.sendStatus(501) //TODO
+})
+
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "./public/404.html"))
 })
 
 app.listen(PORT, () => console.log("server listening on port", PORT))
