@@ -20,18 +20,26 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/login.html"))
 })
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   console.log(req.body)
-  res.sendStatus(501) //TODO
+  if (await usersComponent.login(req.body.email, req.body.password)){
+    res.send("Logged in") //TODO
+  } else {
+    res.send("Login failed") //TODO
+  }
 })
 
 app.get("/signup", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/signup.html"))
 })
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
   console.log(req.body)
-  res.sendStatus(501) //TODO
+  if (await usersComponent.create(req.body)){
+    res.send("User created") //TODO
+  } else {
+    res.send("User already exists") //TODO
+  }
 })
 
 app.use((req, res) => {
