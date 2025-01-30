@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 })
 
 function generateToken(email) {
-    return jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' })
 }
 
 async function sendConfirmationEmail(to, token) {
