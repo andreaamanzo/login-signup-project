@@ -6,17 +6,16 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
       user: configs.EMAIL, 
-      pass: configs.EMAIL_PASSWORD 
+      pass: configs.EMAIL_PASSWOR
   }
 })
 
 function generateToken(email) {
-    return jwt.sign({ email }, 'chiaveSegretaSuperSicura', { expiresIn: '1h' });
+    return jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' });
 }
 
 async function sendConfirmationEmail(to, token) {
-    console.log("in sendConfirmationEmail")
-    const confirmationUrl = `https://tuosito.com/verify-email?token=${token}`
+    const confirmationUrl = `http://${configs.SITE_HOST}:${configs.PORT}/verify-email?token=${token}`
 
     const mailOptions = {
         from: `"Il Tuo Sito" ${configs.EMAIL}`,
@@ -25,8 +24,6 @@ async function sendConfirmationEmail(to, token) {
         html: `<p>Clicca il link per confermare la tua email:</p>
                <a href="${confirmationUrl}">${confirmationUrl}</a>`
     }
-
-    console.log("mailOptions", mailOptions)
 
     try {
         await transporter.sendMail(mailOptions)

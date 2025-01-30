@@ -1,8 +1,6 @@
 const fs = require("fs")
 const bcrypt = require("bcrypt")
 
-const { generateToken } = require("./utils")
-
 class UsersComponent {
   constructor(statePath) {
     this.users = []
@@ -22,7 +20,7 @@ class UsersComponent {
   async create(data) {
     const { email, password, token } = data
 
-    if (this.users.find(user => user.email === email)) {
+    if (this.users.find(u => u.email === email)) {
       return false
     }
 
@@ -41,7 +39,7 @@ class UsersComponent {
   }
 
   async login(email, password) {
-    const user = this.users.find(user => user.email === email);
+    const user = this.users.find(u => u.email === email);
 
     if (!user) {
         return { success: false, message: "Utente non trovato" };
@@ -60,11 +58,12 @@ class UsersComponent {
 
 
   async updateVerificationStatus(email, verified) {
-    const user = this.users.find(user => user.email === email)
+    const user = this.users.find(u => u.email === email)
     if (!user) {  
       return false
     }
     user.verified = verified
+    user.token = null
     this.serialize()
     return true
   }
