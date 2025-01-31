@@ -18,7 +18,7 @@ async function sendConfirmationEmail(to, token) {
     const confirmationUrl = `http://${configs.SITE_HOST}:${configs.PORT}/verify-email?token=${token}`
 
     const mailOptions = {
-        from: `"Il Tuo Sito" ${configs.EMAIL}`,
+        from: `"LS-Project" ${configs.EMAIL}`,
         to: to,
         subject: 'Conferma la tua email',
         html: `<p>Clicca il link per confermare la tua email:</p>

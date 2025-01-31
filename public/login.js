@@ -1,5 +1,5 @@
 const toggleLoginPassword = document.getElementById('toggleLoginPassword')
-const loginPasswordField = document.getElementById('login-password')
+const loginPasswordField = document.getElementById('loginPassword')
 
 toggleLoginPassword.addEventListener('click', () => {
     const type = loginPasswordField.getAttribute('type') === 'password' ? 'text' : 'password'

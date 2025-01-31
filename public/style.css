@@ -3,64 +3,103 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Lucida Sans", Arial, sans-serif;
-  background-color: #3498db;
-  color: #333;
 }
 
 body {
+  background-image: url('login-background.jpg'); /* Sfondo principale */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* --- CONTAINER GENERALE --- */
 .container {
   min-width: 300px;
   padding: 30px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 1);
   border-radius: 8px;
   text-align: center;
 }
 
+/* --- HOME PAGE --- */
 .home-container {
   display: flex;
   width: 100%;
-  height: 100%;
-  padding: 0;
+  height: 100vh;
+  background-image: url('login-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
-		
+
 .left-panel, .right-panel {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .left-panel {
-  background-color: #3498db;
+  background: rgba(0, 0, 0);
   color: #fff;
-  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
 }
 
 .right-panel {
-  background-color: #0065a9;
-  text-align: center;
+  background: rgba(40, 40, 40);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  color: #fff;
+}
+
+h1.home-h1 {
+  font-size: 2em;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+p.home-p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #f1f1f1;
 }
 
 .buttons {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
   gap: 20px;
 }
 
+.a-button {
+  min-width: 120px;
+  padding: 12px 20px;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.2em;
+  transition: background-color 0.3s ease;
+}
 
+.a-button:hover {
+  background-color: #2980b9;
+}
+
+/* --- FORM LOGIN --- */
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
 .input-wrapper {
@@ -74,35 +113,34 @@ form {
   width: 100%;
   padding: 10px;
   padding-right: 40px;
-  border: 1px solid #ccc;
+  border: 1px solid #777;
   border-radius: 5px;
   font-size: 1em;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
   box-sizing: border-box;
+}
+
+.input-wrapper input::placeholder {
+  color: #ccc;
 }
 
 .input-wrapper i {
   position: absolute;
   right: 10px;
-  transform: translateY(-35%);
+  transform: translateY(100%);
   cursor: pointer;
-  color: #666;
+  color: #ccc;
 }
 
 .input-wrapper i:hover {
-  color: #333;
+  color: #fff;
 }
 
 h1 {
   font-size: 2.5em;
-  margin: 0 0 20px;
-  color: #3498db;
-}
-
-h1.home-h1 {
-  font-size: 3.5em;
-  margin: 0 0 20px;
-  color: #fff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  margin: 0 20px 0 20px;
+  color: #f1f1f1;
 }
 
 h1.error {
@@ -111,32 +149,36 @@ h1.error {
 }
 
 p {
-  margin: 10px 0 20px;
-  line-height: 1.6;
-  color: #666;
-}
-
-p.home-p {
-  font-size: 1.2em;
-  color: #ffffff;
+  margin: 0;
+  margin-top: 6px;
+  font-size: 0.9em;
+  color: #ddd;
 }
 
 a {
-  color: #3498db;
+  color: #007ffe;
   text-decoration: none;
   transition: color 0.3s, text-decoration 0.3s;
 }
 
 a:hover {
-  color: #2980b9;
+  color: #0061c3;
   text-decoration: underline;
 }
 
+.forgotPassword {
+  text-align: left;
+  margin-left: 2px;
+}
+
+/* --- BOTTONI --- */
 button, .a-button {
   min-width: 100px;
   display: inline-block;
   padding: 10px 20px;
-  background-color: #3498db;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  background-color: #0060c0;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -147,19 +189,39 @@ button, .a-button {
 }
 
 button:hover, .a-button:hover {
-  background-color: #2980b9;
+  background-color: rgb(1, 73, 121);
   color: #fff;
   text-decoration: none;
 }
 
+/* --- INPUT TEXT, EMAIL, PASSWORD --- */
 input[type="text"], input[type="email"], input[type="password"] {
   box-sizing: border-box;
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-top: 30px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1em;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
+.input-error {
+  border: 2px solid red !important;
+}
 
+#confirmPasswordMessage {
+  color: red;
+  font-size: 0.8em;
+  margin: 0;
+  margin-top: 6px;
+  margin-left: 2px;
+  text-align: left;
+  display: none;
+  /* transform: translateY(-50%); */
+}
+
+#confirmPasswordMessage i {
+  font-size: 1em;
+}
