@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const configs = require("./configs")
+const bcrypt = require("bcrypt")
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -12,6 +13,13 @@ const transporter = nodemailer.createTransport({
 
 function generateToken(email) {
     return jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' })
+}
+
+async function hashPassword(password) {
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const base64HashedPassword = Buffer.from(hashedPassword).toString('base64')
+
+    return base64HashedPassword
 }
 
 async function sendConfirmationEmail(to, token) {
@@ -27,7 +35,24 @@ async function sendConfirmationEmail(to, token) {
 
     try {
         await transporter.sendMail(mailOptions)
-        console.log('Email di conferma inviata')
+    } catch (error) {
+        console.error('Errore nell’invio dell’email:', error)
+    }
+}
+
+async function sendResetPasswordEmail(to, token) {
+    const resetPasswordUrl = `http://${configs.SITE_HOST}:${configs.PORT}/reset-password?token=${token}`
+
+    const mailOptions = {
+        from: `"LS-Project" ${configs.EMAIL}`,
+        to: to,
+        subject: 'Reset password',
+        html: `<p>Clicca il link per impostare una nuova password:</p>
+               <a href="${resetPasswordUrl}">${resetPasswordUrl}</a>`
+    }
+
+    try {
+        await transporter.sendMail(mailOptions)
     } catch (error) {
         console.error('Errore nell’invio dell’email:', error)
     }
@@ -35,5 +60,7 @@ async function sendConfirmationEmail(to, token) {
 
 module.exports = {
     generateToken,
-    sendConfirmationEmail
+    hashPassword,
+    sendConfirmationEmail,
+    sendResetPasswordEmail
 }

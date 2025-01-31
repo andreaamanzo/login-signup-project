@@ -1,5 +1,6 @@
 const fs = require("fs")
 const bcrypt = require("bcrypt")
+const { generateToken, hashPassword } = require("./utils")
 
 class UsersComponent {
     constructor(statePath) {
@@ -17,29 +18,85 @@ class UsersComponent {
         fs.writeFileSync(this.statePath, JSON.stringify(this.users, null, 2))
     }
 
-    async create(data) {
-        const { email, password, token } = data
+    getUser(email) {
+        return this.users.find(u => u.email === email)
+    }
 
-        if (this.users.find(u => u.email === email)) {
+    setUserToken(email) {
+        const user = this.getUser(email)
+
+        if (!user) {
+            return { success: false, message: "Utente non trovato" }
+        }
+
+        const token = generateToken(email)
+        user.token = token
+        this.serialize()
+
+        return { success: true, message: "Token impostato con successo" }
+    }
+
+    invalidateUserToken(email) {
+        const user = this.getUser(email)
+
+        if (!user) {
+            return { success: false, message: "Utente non trovato" }
+        }
+
+        user.token = null
+        this.serialize()
+
+        return { success: true, message: "Token invalidato con successo" }
+    }
+
+    async updateUserPassword(email, password) {
+        const user = this.getUser(email)
+
+        if (!user) {
+            return { success: false, message: "Utente non trovato" }
+        }
+
+        user.password = await hashPassword(password)
+        this.serialize()
+        
+        return { success: true, message: "Password impostata con successo" }
+    }
+    
+    updateVerificationStatus(email, verified) {
+        const user = this.getUser(email)
+        if (!user) {  
+            return { success: false, message: "Utente non trovato" }
+        }
+
+        user.verified = verified
+        user.token = null
+        this.serialize()
+
+        return { success: true, message: "Verification status updated" }
+    }
+
+    async create(data) {
+        const { email, password } = data
+
+        if (this.getUser(email)) {
             return { success: false, message: "Email già in uso" }
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const base64HashedPassword = Buffer.from(hashedPassword).toString('base64')
-
-        this.users.push({ 
+        const user = {
             email, 
-            password: base64HashedPassword,
-            token,
+            password: await hashPassword(password),
+            token : null,
             verified: false 
-        })
+        }
+
+        this.users.push(user)
         this.serialize()
         
-        return { success: true, message: "Utente creato con successo. Controlla la tua email per la conferma." }
+        return { success: true, user, message: "Utente creato con successo. Controlla la tua email per la conferma." }
     }
 
     async login(email, password) {
-        const user = this.users.find(u => u.email === email)
+        const user = this.getUser(email)
 
         if (!user) {
             return { success: false, message: "Utente non trovato" }
@@ -56,19 +113,6 @@ class UsersComponent {
         return { success: false, message: "Password errata" }
     }
 
-    updateVerificationStatus(email, verified) {
-        const user = this.users.find(u => u.email === email)
-
-        if (!user) {  
-            return { success: false, message: "Utente non trovato" }
-        }
-
-        user.verified = verified
-        user.token = null
-        this.serialize()
-
-        return { success: true, message: "Verification status updated" }
-    }
 }
 
 module.exports = UsersComponent
