@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <title>Conferma account</title>
+
+    <!-- Carica jQuery prima di Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="small-h1">Email di conferma inviata</h1>
+    <p class="center-p">Controlla la tua email e clicca sul link per confermare la registrazione</p>
+    <p class="center-p">Non hai ricevuto nulla? <a id="resend">Rimanda Email</a></p>
+    <a href="/login" class="a-button">Vai al login</a>
+  </div>
+  <script src="signupConfirmation.js"></script>
+</body>
+</html>

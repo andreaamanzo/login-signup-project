@@ -1,3 +1,14 @@
+toastr.options = {
+    "positionClass": "toast-bottom-right",
+    "closeButton": true,
+    "progressBar": true,
+    "timeOut": "4000",
+    "extendedTimeOut": "2000",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+}
+
+
 function togglePasswordVisibility(inputField, toggleIcon) {
     const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password'
     inputField.setAttribute('type', type)

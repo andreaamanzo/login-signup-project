@@ -28,8 +28,12 @@ h1.error {
   color: #e74c3c;
 }
 
-h1.reset-password, h1.forgot-password {
+h1.medium-h1 {
   font-size: 2em;
+}
+
+h1.small-h1 {
+  font-size: 1.8em;
 }
 
 p {
@@ -39,7 +43,7 @@ p {
   color: #ddd;
 }
 
-p.reset-password, p.forgot-password {
+p.center-p {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 10px;
@@ -54,6 +58,7 @@ a {
 a:hover {
   color: #0061c3;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 form {

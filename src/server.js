@@ -3,11 +3,12 @@ const join = require("path").join
 const jwt = require('jsonwebtoken')
 const configs = require("./configs")
 const UsersComponent = require("./UsersComponent")
-const { generateToken, sendConfirmationEmail, sendResetPasswordEmail } = require("./utils")
+const { sendConfirmationEmail, sendResetPasswordEmail } = require("./utils")
 
 const app = new express()
 const usersComponent = new UsersComponent("./state.json")
 
+app.use(express.json())
 // Per abilitare il parsing delle form in formato urlencoded
 app.use(express.urlencoded({ extended: true }))
 
@@ -42,10 +43,14 @@ app.post("/signup", async (req, res) => {
         const user = result.user
         usersComponent.setUserToken(user.email)
         sendConfirmationEmail(user.email, user.token)
-        res.json(result)
+        res.redirect(`/signupConfirmation?email=${encodeURIComponent(user.email)}`)
     } else {
         res.status(400).json(result)
     }
+})
+
+app.get('/signupConfirmation', async (req, res) => {
+        res.sendFile(join(__dirname, "../public/signupConfirmation.html"))
 })
 
 app.get('/verify-email', async (req, res) => {
@@ -62,6 +67,7 @@ app.get('/verify-email', async (req, res) => {
         }
 
         if (user.verified) {
+            usersComponent.invalidateUserToken(email)
             return res.status(400).send('Email già verificata.')
         }
 
@@ -77,21 +83,47 @@ app.get('/verify-email', async (req, res) => {
     }
 })
 
+app.post("/resend-email", async (req, res) => {
+    const { email } = req.body
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email richiesta" })
+    }
+
+    const user = usersComponent.getUser(email)
+    if (!user) {
+        return res.status(404).json({ success: false, message: "Utente non trovato" })
+    }
+
+    if (user.confirmed) {
+        return res.status(400).json({ success: false, message: "Email già confermata" })
+    }
+
+    usersComponent.setUserToken(user.email)
+    sendConfirmationEmail(user.email, user.token)
+
+    return res.json({ success: true, message: "Email di conferma inviata nuovamente" })
+})
+
 app.get('/forgot-password', async (req, res) => {
     res.sendFile(join(__dirname, "../public/forgotPassword.html"))
 })
 
 app.post('/forgot-password', async (req, res) => {
     const { email } = req.body
+
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email richiesta" })
+    }
+
     const user = usersComponent.getUser(email)
 
     if (!user) {
-        return res.status(400).send('Email non collegata a nessun utente.')
+        return res.status(400).json({ success: false, message: "Email non collegata a nessun utente" })
     }
 
     usersComponent.setUserToken(email)
     sendResetPasswordEmail(email, user.token)
-    return res.status(200).send('Email per il reset password inviata')
+    return res.json({ success: true, message: "Email di reset password inviata" })
 })
 
 app.get('/reset-password', async (req, res) => {
