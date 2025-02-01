@@ -2,6 +2,7 @@ const form = document.getElementById('forgot-password-form')
 const messageP = document.getElementById('messageP')
 const resendEmailP = document.getElementById('resendEmailP')
 const newEmailP = document.getElementById('newEmailP')
+const title = document.getElementById('title')
 
 async function sendEmail (event) {
     event.preventDefault(); // Previene il refresh della pagina
@@ -28,6 +29,7 @@ async function sendEmail (event) {
             form.style.display = 'none'
             resendEmailP.style.display = 'block'
             newEmailP.style.display = 'block'
+            title.innerText = "Email di ripristino inviata"
             messageP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per impostare una nuova password`
             toastr.success(data.message || "Email inviata con successo!");
         } else {

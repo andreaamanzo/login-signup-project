@@ -59,34 +59,51 @@ app.get('/signup-confirmation', async (req, res) => {
 })
 
 app.get('/verify-email', async (req, res) => {
-    const { token } = req.query
+    const { token } = req.query;
 
     try {
-        const decoded = jwt.verify(token, configs.JWT_SECRET)
-        const email = decoded.email
+        const decoded = jwt.verify(token, configs.JWT_SECRET);  // Verifica il token
+        const email = decoded.email;
 
-        const user = usersComponent.getUser(email)
+        const user = usersComponent.getUser(email);
 
         if (!user) {
-            return res.status(400).send('Utente non trovato.')
+            return res.redirect(`/verified-email?status=invalid`);
         }
 
         if (user.verified) {
-            usersComponent.invalidateUserToken(email)
-            return res.status(400).json({ success: false, message: "Email già verificata" })
+            usersComponent.invalidateUserToken(email);
+            return res.redirect(`/verified-email?status=already_verified&email=${encodeURIComponent(user.email)}`);
         }
 
         if (user.token !== token) {
-            return res.status(400).json({ success: false, message: "Link non valido o già usato" })
+            return res.redirect(`/verified-email?status=invalid&email=${encodeURIComponent(user.email)}`);
         }
 
-        usersComponent.updateVerificationStatus(email, true)
+        usersComponent.updateVerificationStatus(email, true);
 
         return res.redirect(`/verified-email?status=success&email=${encodeURIComponent(user.email)}`);
     } catch (error) {
-        return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
+        // Se il token è scaduto, prova a decodificarlo senza verificare
+        let email = null;
+        if (error.name === "TokenExpiredError") {
+            const decoded = jwt.decode(token);  // Decodifica il token senza verificare
+            email = decoded?.email;
+        }
+
+        if (email) {
+            // Genera un nuovo token e invia una nuova email
+            const newToken = jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' });
+            usersComponent.setUserToken(email, newToken);
+            emailComponent.sendConfirmationEmail(email, newToken);
+
+            return res.redirect(`/verified-email?status=resent&email=${encodeURIComponent(email)}`);
+        }
+
+        return res.redirect(`/verified-email?status=invalid`);
     }
-})
+});
+
 
 app.get("/verified-email", (req, res) => {
     res.sendFile(join(__dirname, "../public/html/verifiedEmail.html"))
@@ -94,6 +111,7 @@ app.get("/verified-email", (req, res) => {
 
 app.post("/resend-email", async (req, res) => {
     const { email } = req.body
+    console.log(email)
     if (!email) {
         return res.status(400).json({ success: false, message: "Email richiesta" })
     }
@@ -110,7 +128,7 @@ app.post("/resend-email", async (req, res) => {
     usersComponent.setUserToken(user.email)
     emailComponent.sendConfirmationEmail(user.email, user.token)
 
-    return res.json({ success: true, message: "Email di conferma inviata nuovamente" })
+    return res.json({ success: true, user, message: "Email di conferma inviata nuovamente" })
 })
 
 app.get('/forgot-password', async (req, res) => {
