@@ -16,9 +16,10 @@
 <body>
   <div class="container">
     <h1>Log in</h1>
-    <form action="login" method="post">
+    <form id="loginForm">
+      <p class="error" style="display: none;" id="errorMessage">Email o password errata</p>
       <div class="input-wrapper">
-        <input type="email" name="email" placeholder="Email" required="required" />
+        <input type="email" id="loginEmail" name="email" placeholder="Email" required="required" />
       </div>
       <div class="input-wrapper">
         <input type="password" id="loginPassword" name="password" placeholder="Password" required="required" />

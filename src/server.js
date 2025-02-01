@@ -50,6 +50,10 @@ app.post("/signup", async (req, res) => {
     }
 })
 
+app.get("/welcome", (req, res) => {
+    res.sendFile(join(__dirname, "../public/html/welcome.html"));
+});
+
 app.get('/signup-confirmation', async (req, res) => {
     res.sendFile(join(__dirname, "../public/html/signupConfirmation.html"))
 })
@@ -78,11 +82,15 @@ app.get('/verify-email', async (req, res) => {
 
         usersComponent.updateVerificationStatus(email, true)
 
-        return res.json({ success: true, message: "Email verificata con successo" })
+        return res.redirect(`/verified-email?status=success&email=${encodeURIComponent(user.email)}`);
     } catch (error) {
         return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
     }
 })
+
+app.get("/verified-email", (req, res) => {
+    res.sendFile(join(__dirname, "../public/html/verifiedEmail.html"))
+});
 
 app.post("/resend-email", async (req, res) => {
     const { email } = req.body

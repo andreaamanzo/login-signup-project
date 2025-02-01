@@ -49,6 +49,11 @@ p.center-p {
   margin-bottom: 10px;
 }
 
+p.error {
+  color: red;
+  transform: translateY(100%);
+}
+
 a {
   color: #007ffe;
   text-decoration: none;
@@ -75,6 +80,10 @@ form {
   box-shadow: 0 0 15px rgba(0, 0, 0, 1);
   border-radius: 8px;
   text-align: center;
+}
+
+.container.extended {
+  max-width: 600px;
 }
 
 /* --- HOME PAGE --- */

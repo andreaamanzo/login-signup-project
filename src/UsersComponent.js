@@ -107,7 +107,7 @@ class UsersComponent {
         }
 
         if (await bcrypt.compare(password, Buffer.from(user.password, 'base64').toString('utf-8'))) {
-            return { success: true, message: "Login riuscito" }
+            return { success: true, user, message: "Login riuscito" }
         }
 
         return { success: false, message: "Password errata" }
