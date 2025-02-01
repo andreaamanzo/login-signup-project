@@ -1,3 +1,14 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search)
+    const email = urlParams.get("email")
+
+    console.log(email)
+
+    const sentEmailP = document.getElementById('sentEmailP')
+
+    sentEmailP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per verificare la tua Email`
+})
+
 document.getElementById("resend").addEventListener("click", async (event) => {
     event.preventDefault()
     const email = new URLSearchParams(window.location.search).get("email")

@@ -2,7 +2,7 @@ toastr.options = {
     "positionClass": "toast-bottom-right",
     "closeButton": true,
     "progressBar": true,
-    "timeOut": "4000",
+    "timeOut": "5000",
     "extendedTimeOut": "2000",
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
@@ -16,7 +16,7 @@ function togglePasswordVisibility(inputField, toggleIcon) {
 }
 
 function checkPasswords(passwordField, confirmPasswordField, messageElement, submitButton) {
-    if (passwordField.value !== confirmPasswordField.value) {
+    if (passwordField.value !== confirmPasswordField.value && confirmPasswordField.value != "") {
         messageElement.style.display = 'block'
         submitButton.disabled = true
         passwordField.classList.add('input-error')

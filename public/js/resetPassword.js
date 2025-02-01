@@ -5,6 +5,7 @@ const toggleResetPasswordConfirmPassword = document.getElementById('toggleResetP
 const confirmPasswordMessage = document.getElementById('confirmPasswordMessage')
 const resetPasswordButton = document.querySelector('button[type="submit"]')
 const form = document.getElementById("form-reset")
+const resetPasswordP = document.getElementById('resetPasswordP')
 
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search)
@@ -46,8 +47,9 @@ document.getElementById("reset-submit").addEventListener("click", async (event) 
         const data = JSON.parse(text)
 
         if (data.success) {
-            toastr.success(data.message)
             form.style.display = 'none'
+            resetPasswordP.textContent = "Password modificata con successo"
+            resetPasswordP.style.color = "green"
         } else {
             toastr.error(data.message)
         }

@@ -16,11 +16,11 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(join(__dirname, "../public")))
 
 app.get("/", (req, res) => {
-    res.sendFile(join(__dirname, "../public/home.html"))
+    res.sendFile(join(__dirname, "../public/html/home.html"))
 })
 
 app.get("/login", (req, res) => {
-    res.sendFile(join(__dirname, "../public/login.html"))
+    res.sendFile(join(__dirname, "../public/html/login.html"))
 })
 
 app.post("/login", async (req, res) => {
@@ -33,7 +33,7 @@ app.post("/login", async (req, res) => {
 })
 
 app.get("/signup", (req, res) => {
-    res.sendFile(join(__dirname, "../public/signup.html"))
+    res.sendFile(join(__dirname, "../public/html/signup.html"))
 })
 
 app.post("/signup", async (req, res) => {
@@ -43,14 +43,14 @@ app.post("/signup", async (req, res) => {
         const user = result.user
         usersComponent.setUserToken(user.email)
         sendConfirmationEmail(user.email, user.token)
-        res.redirect(`/signupConfirmation?email=${encodeURIComponent(user.email)}`)
+        res.redirect(`/signup-confirmation?email=${encodeURIComponent(user.email)}`)
     } else {
         res.status(400).json(result)
     }
 })
 
-app.get('/signupConfirmation', async (req, res) => {
-        res.sendFile(join(__dirname, "../public/signupConfirmation.html"))
+app.get('/signup-confirmation', async (req, res) => {
+    res.sendFile(join(__dirname, "../public/html/signupConfirmation.html"))
 })
 
 app.get('/verify-email', async (req, res) => {
@@ -68,18 +68,18 @@ app.get('/verify-email', async (req, res) => {
 
         if (user.verified) {
             usersComponent.invalidateUserToken(email)
-            return res.status(400).send('Email già verificata.')
+            return res.status(400).json({ success: false, message: "Email già verificata" })
         }
 
         if (user.token !== token) {
-            return res.status(400).send('Link non valido o già usato.')
+            return res.status(400).json({ success: false, message: "Link non valido o già usato" })
         }
 
         usersComponent.updateVerificationStatus(email, true)
 
-        res.send('Email verificata con successo!')
+        return res.json({ success: true, message: "Email verificata con successo" })
     } catch (error) {
-        res.status(400).send('Link non valido o scaduto.')
+        return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
     }
 })
 
@@ -94,8 +94,8 @@ app.post("/resend-email", async (req, res) => {
         return res.status(404).json({ success: false, message: "Utente non trovato" })
     }
 
-    if (user.confirmed) {
-        return res.status(400).json({ success: false, message: "Email già confermata" })
+    if (user.verified) {
+        return res.status(400).json({ success: false, message: "Email già verificata" })
     }
 
     usersComponent.setUserToken(user.email)
@@ -105,7 +105,7 @@ app.post("/resend-email", async (req, res) => {
 })
 
 app.get('/forgot-password', async (req, res) => {
-    res.sendFile(join(__dirname, "../public/forgotPassword.html"))
+    res.sendFile(join(__dirname, "../public/html/forgotPassword.html"))
 })
 
 app.post('/forgot-password', async (req, res) => {
@@ -121,9 +121,9 @@ app.post('/forgot-password', async (req, res) => {
         return res.status(400).json({ success: false, message: "Email non collegata a nessun utente" })
     }
 
-
     usersComponent.setUserToken(email)
     sendResetPasswordEmail(email, user.token)
+
     return res.json({ success: true, message: "Email di reset password inviata" })
 })
 
@@ -137,14 +137,14 @@ app.get('/reset-password', async (req, res) => {
         const user = usersComponent.getUser(email)
 
         if (!user) {
-            return res.status(400).send('Utente non trovato.')
+            return res.status(404).json({ success: false, message: "Utente non trovato" })
         }
 
         if (user.token !== token) {
-            return res.status(400).send('Link non valido o scaduto.')
+            return res.status(400).json({ success: false, message: "Link non valido o già usato" })
         }
 
-        res.sendFile(join(__dirname, "../public/resetPassword.html"))
+        res.sendFile(join(__dirname, "../public/html/resetPassword.html"))
     } catch (error) {
         res.status(400).send('Link non valido o scaduto.')
     }
@@ -179,7 +179,7 @@ app.post('/reset-password', async (req, res) => {
 })
 
 app.use((req, res) => {
-    res.sendFile(join(__dirname, "../public/404.html"))
+    res.sendFile(join(__dirname, "../public/html/404.html"))
 })
 
 app.listen(configs.PORT, configs.SITE_URL, () => console.log("server listening on port", configs.PORT))

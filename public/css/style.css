@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-  background-image: url('login-background.jpg'); /* Sfondo principale */
+  background-image: url('../images/login-background.jpg'); /* Sfondo principale */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -82,7 +82,7 @@ form {
   display: flex;
   width: 100%;
   height: 100vh;
-  background-image: url('login-background.jpg');
+  background-image: url('../images/login-background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

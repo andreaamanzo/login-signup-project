@@ -28,7 +28,7 @@ async function sendEmail (event) {
             form.style.display = 'none'
             resendEmailP.style.display = 'block'
             newEmailP.style.display = 'block'
-            messageP.textContent = `Email inviata all'indirizzo ${email}`
+            messageP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per impostare una nuova password`
             toastr.success(data.message || "Email inviata con successo!");
         } else {
             toastr.error(data.message || "Errore nell'invio dell'email.");
