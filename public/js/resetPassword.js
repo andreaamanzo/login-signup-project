@@ -28,8 +28,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.getElementById("reset-submit").addEventListener("click", async (event) => {
     event.preventDefault()
+    const password = resetPasswordPasswordField.value
+    const confirmPassword = resetPasswordConfirmPasswordField.value
+
+    if (!password || !confirmPassword) return
+
+
     const token = document.getElementById('token').value
-    const password = document.getElementById('resetPasswordPassword').value
 
     if (!token) {
         toastr.error("Email sconosciuta.")

@@ -3,10 +3,11 @@ const join = require("path").join
 const jwt = require('jsonwebtoken')
 const configs = require("./configs")
 const UsersComponent = require("./UsersComponent")
-const { sendConfirmationEmail, sendResetPasswordEmail } = require("./utils")
+const EmailComponent = require("./EmailComponent")
 
 const app = new express()
 const usersComponent = new UsersComponent("./state.json")
+const emailComponent = new EmailComponent()
 
 app.use(express.json())
 // Per abilitare il parsing delle form in formato urlencoded
@@ -42,7 +43,7 @@ app.post("/signup", async (req, res) => {
     if (result.success) {
         const user = result.user
         usersComponent.setUserToken(user.email)
-        sendConfirmationEmail(user.email, user.token)
+        emailComponent.sendConfirmationEmail(user.email, user.token)
         res.redirect(`/signup-confirmation?email=${encodeURIComponent(user.email)}`)
     } else {
         res.status(400).json(result)
@@ -99,7 +100,7 @@ app.post("/resend-email", async (req, res) => {
     }
 
     usersComponent.setUserToken(user.email)
-    sendConfirmationEmail(user.email, user.token)
+    emailComponent.sendConfirmationEmail(user.email, user.token)
 
     return res.json({ success: true, message: "Email di conferma inviata nuovamente" })
 })
@@ -122,7 +123,7 @@ app.post('/forgot-password', async (req, res) => {
     }
 
     usersComponent.setUserToken(email)
-    sendResetPasswordEmail(email, user.token)
+    emailComponent.sendResetPasswordEmail(email, user.token)
 
     return res.json({ success: true, message: "Email di reset password inviata" })
 })
@@ -152,8 +153,6 @@ app.get('/reset-password', async (req, res) => {
 
 app.post('/reset-password', async (req, res) => {
     const { token, password } = req.body
-
-    console.log(req.body)
 
     try {
         const decoded = jwt.verify(token, configs.JWT_SECRET)
