@@ -152,26 +152,28 @@ app.get('/reset-password', async (req, res) => {
 app.post('/reset-password', async (req, res) => {
     const { token, password } = req.body
 
+    console.log(req.body)
+
     try {
         const decoded = jwt.verify(token, configs.JWT_SECRET)
         const email = decoded.email
 
         const user = usersComponent.getUser(email)
         if (!user) {
-            return res.status(400).send('Utente non trovato.')
+            return res.status(400).json({ success: false, message: "Utente sconosciuto" })
         }
 
         if (user.token !== token) {
-            return res.status(400).send('Link non valido o già usato.')
+            return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
         }
 
         usersComponent.updateUserPassword(email, password)
 
         usersComponent.invalidateUserToken(email)
 
-        res.send('Password reimpostata con successo.')
+        res.json({ success: true, message: "Nuova password impostata" })
     } catch (error) {
-        res.status(400).send('Link non valido o scaduto.')
+        return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
     }
 })
 

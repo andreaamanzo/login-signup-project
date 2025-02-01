@@ -1,4 +1,9 @@
-document.getElementById("forgot-password-form").addEventListener("submit", async function(event) {
+const form = document.getElementById('forgot-password-form')
+const messageP = document.getElementById('messageP')
+const resendEmailP = document.getElementById('resendEmailP')
+const newEmailP = document.getElementById('newEmailP')
+
+async function sendEmail (event) {
     event.preventDefault(); // Previene il refresh della pagina
 
     const email = document.getElementById("email").value;
@@ -7,6 +12,7 @@ document.getElementById("forgot-password-form").addEventListener("submit", async
         toastr.error("Inserisci un'email valida.");
         return;
     }
+
 
     try {
         const response = await fetch("/forgot-password", {
@@ -19,6 +25,10 @@ document.getElementById("forgot-password-form").addEventListener("submit", async
         const data = JSON.parse(text);
 
         if (data.success) {
+            form.style.display = 'none'
+            resendEmailP.style.display = 'block'
+            newEmailP.style.display = 'block'
+            messageP.textContent = `Email inviata all'indirizzo ${email}`
             toastr.success(data.message || "Email inviata con successo!");
         } else {
             toastr.error(data.message || "Errore nell'invio dell'email.");
@@ -26,4 +36,7 @@ document.getElementById("forgot-password-form").addEventListener("submit", async
     } catch (error) {
         toastr.error("Errore di connessione. Riprova.");
     }
-});
+}
+
+document.getElementById("forgot-password-form").addEventListener("submit", sendEmail)
+document.getElementById("resendEmailP").addEventListener("click", sendEmail)

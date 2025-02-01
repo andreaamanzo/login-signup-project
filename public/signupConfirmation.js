@@ -1,15 +1,4 @@
-toastr.options = {
-    "positionClass": "toast-bottom-right", // Posiziona in basso a destra
-    "closeButton": true,                   // Aggiunge il pulsante di chiusura
-    "progressBar": true,                    // Aggiunge una barra di progresso
-    "timeOut": "4000",                     // Tempo di chiusura automatico (in millisecondi)
-    "extendedTimeOut": "2000",
-    "showMethod": "fadeIn",                // Effetto di entrata
-    "hideMethod": "fadeOut",               // Effetto di uscita
-}
-
-
-document.getElementById("resend").addEventListener("click", async () => {
+document.getElementById("resend").addEventListener("click", async (event) => {
     event.preventDefault()
     const email = new URLSearchParams(window.location.search).get("email")
 
