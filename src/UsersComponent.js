@@ -9,7 +9,7 @@ class UsersComponent {
         try {
             this.users = JSON.parse(fs.readFileSync(statePath, "utf-8"))
         } catch(err) {
-            console.log(err.message)
+            console.error(err.message)
             this.serialize()
         }
     }

@@ -8,7 +8,7 @@ loginForm.addEventListener("submit", async function (event) {
     event.preventDefault()
 
     const email = loginEmailField.value
-    const password = loginEmailField.value
+    const password = loginPasswordField.value
 
     try {
         const response = await fetch("/login", {
