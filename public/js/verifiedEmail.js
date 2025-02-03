@@ -1,32 +1,32 @@
-const messageElement = document.getElementById("message");
-const welcomeButton = document.getElementById("welcomeButton");
+const messageElement = document.getElementById("message")
+const welcomeButton = document.getElementById("welcomeButton")
 const newEmailButton = document.getElementById("newEmailButton")
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search)
 
 document.addEventListener("DOMContentLoaded", function () {
-    const status = urlParams.get("status");
-    const email = urlParams.get("email");
+    const status = urlParams.get("status")
+    const email = urlParams.get("email")
 
     if (status === "success") {
-        messageElement.textContent = "Email verificata con successo!";
+        messageElement.textContent = "Email verificata con successo!"
         
         sessionStorage.setItem("loggedUserEmail", email)
 
-        loginBtn.style.display = "inline-block";
+        loginBtn.style.display = "inline-block"
 
     } else if (status === "already_verified") {
-        messageElement.textContent = "Email già verificata. Puoi accedere direttamente.";
-        loginBtn.style.display = "inline-block";
+        messageElement.textContent = "Email già verificata. Puoi accedere direttamente."
+        loginBtn.style.display = "inline-block"
     } else {
-        welcomeButton.style.display = "none";
-        messageElement.textContent = "Link non valido o scaduto.";
+        welcomeButton.style.display = "none"
+        messageElement.textContent = "Link non valido o scaduto."
         newEmailButton.style.display = "inline-block"
     }
 
     welcomeButton.addEventListener("click", function () {
-        window.location.href = "/welcome";
-    });
-});
+        window.location.href = "/welcome"
+    })
+})
 
 newEmailButton.addEventListener('click', async (event) => {
     event.preventDefault()
@@ -53,7 +53,7 @@ newEmailButton.addEventListener('click', async (event) => {
         } else {
             console.log(data)
             if (data.message === "Email già verificata") {
-                messageElement.textContent = "L'Email era già stata verificata. Torna al login per accedere";
+                messageElement.textContent = "L'Email era già stata verificata. Torna al login per accedere"
                 newEmailButton.style.display = 'none'
             }
             toastr.error(data.message)

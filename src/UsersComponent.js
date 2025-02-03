@@ -103,14 +103,14 @@ class UsersComponent {
         }
 
         if (!user.verified) {
-            return { success: false, message: "Email non verificata. Controlla la tua posta." }
+            return { success: false, user, message: "Email non verificata. Controlla la tua posta." }
         }
 
         if (await bcrypt.compare(password, Buffer.from(user.password, 'base64').toString('utf-8'))) {
             return { success: true, user, message: "Login riuscito" }
         }
 
-        return { success: false, message: "Password errata" }
+        return { success: false, user, message: "Password errata" }
     }
 
 }

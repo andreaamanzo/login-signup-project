@@ -16,9 +16,10 @@
 <body>
   <div class="container">
     <h1>Sign up</h1>
-    <form action="signup" method="post">
+    <form action="signup" method="post" id="signupForm">
+      <p class="error" style="display: none" id="errorMessage">Email già in uso</p>
       <div class="input-wrapper">
-        <input type="email" name="email" placeholder="Email" required="required" />
+        <input type="email" id="signupEmail" name="email" placeholder="Email" required="required" />
       </div>
       <div class="input-wrapper">
         <input type="password" id="signupPassword" name="password" placeholder="Password" required="required" />

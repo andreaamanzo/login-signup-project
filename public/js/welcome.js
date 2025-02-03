@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = '/login'
     }
     const user =  loggedUserEmail
-    document.getElementById("username").textContent = user;
-});
+    document.getElementById("username").textContent = user
+})
 
 document.getElementById("logoutBtn").addEventListener("click", function () {
-    sessionStorage.removeItem("loggedUserEmail");
-    window.location.href = "/login";
-});
+    sessionStorage.removeItem("loggedUserEmail")
+    window.location.href = "/login"
+})
