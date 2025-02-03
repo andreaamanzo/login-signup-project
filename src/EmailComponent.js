@@ -39,8 +39,7 @@ class EmailComponent {
         }
     
         try {
-            const x = await this.transporter.sendMail(mailOptions)
-            console.log("X; " , x)
+            await this.transporter.sendMail(mailOptions)
         } catch (error) {
             console.error('Errore nell’invio dell’email:', error)
         }
@@ -58,8 +57,7 @@ class EmailComponent {
         }
     
         try {
-            const x = await this.transporter.sendMail(mailOptions)
-            console.log(x)
+            await this.transporter.sendMail(mailOptions)
         } catch (error) {
             console.error('Errore nell’invio dell’email:', error)
         }

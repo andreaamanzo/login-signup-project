@@ -40,8 +40,6 @@ app.get("/signup", (req, res) => {
 app.post("/signup", async (req, res) => {
     const result = await usersComponent.create(req.body)
 
-    console.log(result)
-
     if (result.success) {
         const user = result.user
         usersComponent.setUserToken(user.email)
@@ -106,7 +104,6 @@ app.get('/verify-email', async (req, res) => {
     }
 })
 
-
 app.get("/verified-email", (req, res) => {
     res.sendFile(join(__dirname, "../public/html/verifiedEmail.html"))
 })
@@ -165,16 +162,16 @@ app.get('/reset-password', async (req, res) => {
         const user = usersComponent.getUser(email)
 
         if (!user) {
-            return res.status(404).json({ success: false, message: "Utente non trovato" })
+            return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
         }
 
         if (user.token !== token) {
-            return res.status(400).json({ success: false, message: "Link non valido o già usato" })
+            return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
         }
 
-        res.sendFile(join(__dirname, "../public/html/resetPassword.html"))
+        return res.sendFile(join(__dirname, "../public/html/resetPassword.html"))
     } catch (error) {
-        res.status(400).send('Link non valido o scaduto.')
+        return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
     }
 })
 
