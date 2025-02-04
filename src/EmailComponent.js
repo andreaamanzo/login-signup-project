@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
-const configs = require("./configs")
 const join = require("path").join
 const fs = require('fs')
+const configs = require("./configs")
 
 class EmailComponent {
     constructor() {
@@ -26,6 +26,14 @@ class EmailComponent {
     
         return template
     }
+
+    async sendEmail(mailOptions) {
+        try {
+            await this.transporter.sendMail(mailOptions)
+        } catch (error) {
+            console.error('Errore nell’invio dell’email:', error)
+        }
+    }
     
     async sendConfirmationEmail(to, token) {
         const confirmationUrl = `http://${configs.SITE_HOST}:${configs.PORT}/verify-email?token=${token}`
@@ -38,11 +46,7 @@ class EmailComponent {
             html: htmlContent
         }
     
-        try {
-            await this.transporter.sendMail(mailOptions)
-        } catch (error) {
-            console.error('Errore nell’invio dell’email:', error)
-        }
+        return await this.sendEmail(mailOptions)
     }
     
     async sendResetPasswordEmail(to, token) {
@@ -56,15 +60,8 @@ class EmailComponent {
             html: htmlContent
         }
     
-        try {
-            await this.transporter.sendMail(mailOptions)
-        } catch (error) {
-            console.error('Errore nell’invio dell’email:', error)
-        }
+        return await this.sendEmail(mailOptions)
     }
-
-    
-
 }
 
 module.exports = EmailComponent

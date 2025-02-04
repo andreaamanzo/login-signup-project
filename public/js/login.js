@@ -1,13 +1,13 @@
-const loginForm = document.getElementById("loginForm")
-const toggleLoginPassword = document.getElementById('toggleLoginPassword')
-const loginPasswordField = document.getElementById('loginPassword')
-const loginEmailField = document.getElementById('loginEmail')
-const errorMessage = document.getElementById('errorMessage')
+const loginForm           = document.getElementById("loginForm")
+const toggleLoginPassword = document.getElementById("toggleLoginPassword")
+const loginPasswordField  = document.getElementById("loginPassword")
+const loginEmailField     = document.getElementById("loginEmail")
+const errorMessage        = document.getElementById("errorMessage")
 
-loginForm.addEventListener("submit", async function (event) {
+loginForm.addEventListener("submit", async (event) => {
     event.preventDefault()
 
-    const email = loginEmailField.value
+    const email    = loginEmailField.value
     const password = loginPasswordField.value
 
     try {
@@ -24,13 +24,13 @@ loginForm.addEventListener("submit", async function (event) {
             window.location.href = "/welcome"
         } else {
             errorMessage.style.display = "inline-block"
+            loginEmailField.classList.add('input-error')
+
             if (!data.user || data.user?.verified) {
                 errorMessage.textContent = "Email o password errata"
                 loginPasswordField.classList.add('input-error')
-                loginEmailField.classList.add('input-error')
             } else {
                 errorMessage.textContent = "Email non verificata"
-                loginEmailField.classList.add('input-error')
             }
         }
     } catch (error) {

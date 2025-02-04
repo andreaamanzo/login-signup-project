@@ -10,14 +10,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-  <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
   <div class="container">
     <h1>Sign up</h1>
-    <form action="signup" method="post" id="signupForm">
-      <p class="error" style="display: none" id="errorMessage">Email già in uso</p>
+    <form id="signupForm">
+      <p class="error-p center-p" style="display: none" id="errorMessage"></p>
       <div class="input-wrapper">
         <input type="email" id="signupEmail" name="email" placeholder="Email" required="required" />
       </div>
@@ -29,10 +29,10 @@
         <input type="password" id="signupConfirmPassword" name="confirmPassword" placeholder="Conferma password" required="required" />
         <i class="fas fa-eye" id="toggleSignupConfirmPassword"></i>
       </div>
-      <p id="confirmPasswordMessage"><i class="fas fa-exclamation-circle"></i> Le password non corrispondono</p>
-      <button type="submit">Registrati</button>
+      <p id="confirmPasswordMessage" style="display: none;"><i class="fas fa-exclamation-circle"></i> Le password non corrispondono</p>
+      <button type="submit" id="signupSubmitButton">Registrati</button>
     </form>
-    <p>Sei già registrato? <a href="login">Accedi</a></p>
+    <p class="center-p">Sei già registrato? <a href="/login">Accedi</a></p>
   </div>
   <script src="../js/script.js"></script>
   <script src="../js/signup.js"> </script>

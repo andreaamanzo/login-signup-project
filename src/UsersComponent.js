@@ -1,6 +1,5 @@
 const fs = require("fs")
-const bcrypt = require("bcrypt")
-const { generateToken, hashPassword } = require("./utils")
+const { generateToken, hashPassword, comparePasswords } = require("./utils")
 
 class UsersComponent {
     constructor(statePath) {
@@ -59,7 +58,7 @@ class UsersComponent {
         user.password = await hashPassword(password)
         this.serialize()
         
-        return { success: true, message: "Password impostata con successo" }
+        return { success: true, message: "Password modificata con successo" }
     }
     
     updateVerificationStatus(email, verified) {
@@ -72,11 +71,10 @@ class UsersComponent {
         user.token = null
         this.serialize()
 
-        return { success: true, message: "Verification status updated" }
+        return { success: true, message: "Verification status aggiornato" }
     }
 
-    async create(data) {
-        const { email, password } = data
+    async create(email, password) {
 
         if (this.getUser(email)) {
             return { success: false, message: "Email già in uso" }
@@ -90,9 +88,10 @@ class UsersComponent {
         }
 
         this.users.push(user)
+        this.setUserToken(email)
         this.serialize()
         
-        return { success: true, user, message: "Utente creato con successo. Controlla la tua email per la conferma." }
+        return { success: true, user, message: "Utente creato con successo" }
     }
 
     async login(email, password) {
@@ -103,16 +102,15 @@ class UsersComponent {
         }
 
         if (!user.verified) {
-            return { success: false, user, message: "Email non verificata. Controlla la tua posta." }
+            return { success: false, user, message: "Email non verificata" }
         }
 
-        if (await bcrypt.compare(password, Buffer.from(user.password, 'base64').toString('utf-8'))) {
+        if (await comparePasswords(password, user.password)) {
             return { success: true, user, message: "Login riuscito" }
         }
 
         return { success: false, user, message: "Password errata" }
     }
-
 }
 
 module.exports = UsersComponent

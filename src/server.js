@@ -1,15 +1,16 @@
-const express = require("express")
-const join = require("path").join
-const jwt = require('jsonwebtoken')
-const configs = require("./configs")
+const express        = require("express")
+const join           = require("path").join
+const jwt            = require('jsonwebtoken')
+const configs        = require("./configs")
 const UsersComponent = require("./UsersComponent")
 const EmailComponent = require("./EmailComponent")
 
-const app = new express()
+const app            = new express()
 const usersComponent = new UsersComponent("./state.json")
 const emailComponent = new EmailComponent()
 
 app.use(express.json())
+
 // Per abilitare il parsing delle form in formato urlencoded
 app.use(express.urlencoded({ extended: true }))
 
@@ -26,10 +27,11 @@ app.get("/login", (req, res) => {
 
 app.post("/login", async (req, res) => {
     const result = await usersComponent.login(req.body.email, req.body.password)
+
     if (result.success) {
-        res.json(result)
+        return res.json(result)
     } else {
-        res.status(400).json(result)
+        return res.status(400).json(result)
     }
 })
 
@@ -38,15 +40,14 @@ app.get("/signup", (req, res) => {
 })
 
 app.post("/signup", async (req, res) => {
-    const result = await usersComponent.create(req.body)
+    const result = await usersComponent.create(req.body.email, req.body.password)
 
     if (result.success) {
         const user = result.user
-        usersComponent.setUserToken(user.email)
         emailComponent.sendConfirmationEmail(user.email, user.token)
-        res.redirect(`/signup-confirmation?email=${encodeURIComponent(user.email)}`)
+        return res.json(result)
     } else {
-        res.status(400).json(result)
+        return res.status(400).json(result)
     }
 })
 
@@ -136,10 +137,6 @@ app.get('/forgot-password', async (req, res) => {
 app.post('/forgot-password', async (req, res) => {
     const { email } = req.body
 
-    if (!email) {
-        return res.status(400).json({ success: false, message: "Email richiesta" })
-    }
-
     const user = usersComponent.getUser(email)
 
     if (!user || !user?.verified) {
@@ -202,7 +199,7 @@ app.post('/reset-password', async (req, res) => {
 })
 
 app.use((req, res) => {
-    res.sendFile(join(__dirname, "../public/html/404.html"))
+    res.status(404).sendFile(join(__dirname, "../public/html/404.html"))
 })
 
 app.listen(configs.PORT, configs.SITE_URL, () => console.log("server listening on port", configs.PORT))

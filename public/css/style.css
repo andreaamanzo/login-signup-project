@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-  background-image: url('../images/login-background.jpg'); /* Sfondo principale */
+  background-image: url('../images/login-background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -23,9 +23,12 @@ h1 {
   color: #f1f1f1;
 }
 
-h1.error {
-  font-size: 4em;
+h1.error-h1 {
   color: #e74c3c;
+}
+
+h1.big-h1 {
+  font-size: 4em;
 }
 
 h1.medium-h1 {
@@ -38,18 +41,20 @@ h1.small-h1 {
 
 p {
   margin: 0;
-  margin-top: 6px;
+  margin-top: 5px;
+  margin-left: 2px;
   font-size: 0.9em;
+  text-align: left;
   color: #ddd;
 }
 
 p.center-p {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
-p.error {
+p.error-p {
   color: red;
   transform: translateY(100%);
 }
@@ -192,13 +197,6 @@ p.home-p {
   color: #fff;
 }
 
-
-
-.forgotPassword {
-  text-align: left;
-  margin-left: 2px;
-}
-
 /* --- BOTTONI --- */
 button, .a-button {
   min-width: 100px;
@@ -242,12 +240,6 @@ input[type="text"], input[type="email"], input[type="password"] {
 #confirmPasswordMessage {
   color: red;
   font-size: 0.8em;
-  margin: 0;
-  margin-top: 6px;
-  margin-left: 2px;
-  text-align: left;
-  display: none;
-  /* transform: translateY(-50%); */
 }
 
 #confirmPasswordMessage i {
