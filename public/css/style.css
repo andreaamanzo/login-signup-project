@@ -6,6 +6,7 @@ html, body {
 }
 
 body {
+  background-color: black;
   background-image: url('../images/login-background.jpg');
   background-size: cover;
   background-position: center;
@@ -41,7 +42,7 @@ h1.small-h1 {
 
 p {
   margin: 0;
-  margin-top: 5px;
+  margin-top: 6px;
   margin-left: 2px;
   font-size: 0.9em;
   text-align: left;
@@ -144,12 +145,6 @@ p.home-p {
   gap: 20px;
 }
 
-.a-button:hover {
-  background-color: #2980b9;
-}
-
-/* --- FORM LOGIN --- */
-
 .input-wrapper {
   position: relative;
   display: flex;
@@ -166,7 +161,6 @@ p.home-p {
   font-size: 1em;
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
-  box-sizing: border-box;
 }
 
 .input-wrapper input::placeholder {
@@ -185,7 +179,6 @@ p.home-p {
   color: #fff;
 }
 
-/* --- BOTTONI --- */
 button, .a-button {
   min-width: 100px;
   display: inline-block;
@@ -203,13 +196,18 @@ button, .a-button {
 }
 
 button:hover, .a-button:hover {
-  background-color: rgb(1, 73, 121);
+  background-color: rgb(3, 84, 138);
   color: #fff;
+}
+
+.a-button:hover {
   text-decoration: none;
 }
 
 /* --- INPUT TEXT, EMAIL, PASSWORD --- */
-input[type="text"], input[type="email"], input[type="password"] {
+input[type="text"], 
+input[type="email"], 
+input[type="password"] {
   box-sizing: border-box;
   width: 100%;
   padding: 10px;
@@ -219,6 +217,15 @@ input[type="text"], input[type="email"], input[type="password"] {
   font-size: 1em;
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
+}
+
+/* Reset dello stile imposto dall'autocompletamento */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff;
+  transition: background-color 5000s ease-in-out 0s; 
 }
 
 .input-error {

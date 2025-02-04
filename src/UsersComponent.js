@@ -95,7 +95,7 @@ class UsersComponent {
     async create(email, password) {
 
         if (this.getUser(email)) {
-            return { success: false, message: "Email già in uso" }
+            return { success: false, user: null, message: "Email già in uso" }
         }
 
         const user = {
@@ -116,7 +116,7 @@ class UsersComponent {
         const user = this.getUser(email)
 
         if (!user) {
-            return { success: false, message: "Utente non trovato" }
+            return { success: false, user: null, message: "Utente non trovato" }
         }
 
         if (!user.verified) {

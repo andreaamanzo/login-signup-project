@@ -21,7 +21,7 @@ async function sendEmail (email) {
         return true
     } catch (error) {
         console.error("Errore durante forgot-password:", error)
-        toastr.error("Errore di connessione. Riprova.")
+        toastr.error("Errore inaspettato.")
         return false
     }
 }

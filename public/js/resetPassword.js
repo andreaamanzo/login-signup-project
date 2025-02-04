@@ -32,13 +32,13 @@ resetPasswordForm.addEventListener("submit", async (event) => {
             resetPasswordP.style.color = "green"
             resetPasswordP.textContent = "Password modificata con successo"
 
-            window.history.replaceState(null, "", window.location.pathname);
+            window.history.replaceState(null, "", window.location.pathname)
         } else {
             toastr.error(data.message)
         }
     } catch (error) {
         console.error("Errore durante reset-password:", error)
-        toastr.error("Errore di connessione. Riprova.")
+        toastr.error("Errore inaspettato.")
     }
 })
 
