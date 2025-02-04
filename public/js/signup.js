@@ -21,6 +21,10 @@ signupForm.addEventListener("submit", async (event) => {
             body: JSON.stringify({ email, password })
         })
 
+        if (!response.ok) {
+            throw new Error(`Errore HTTP: ${response.status}`)
+        }
+
         const data = await response.json()
 
         if (data.success) {

@@ -6,6 +6,15 @@ function generateToken(email) {
     return jwt.sign({ email }, configs.JWT_SECRET, { expiresIn: '1h' })
 }
 
+function decodeToken(token) {
+    try {
+        const decoded = jwt.verify(token, configs.JWT_SECRET)
+        return { success: true, decoded }
+    } catch(error) {
+        return { success: false, decoded: null }
+    }
+}
+
 async function hashPassword(password) {
     const hashedPassword = await bcrypt.hash(password, 10)
     const base64HashedPassword = Buffer.from(hashedPassword).toString('base64')
@@ -19,6 +28,7 @@ async function comparePasswords (clearPassword, hashedPassword) {
 
 module.exports = {
     generateToken,
+    decodeToken,
     hashPassword,
     comparePasswords
 }

@@ -31,7 +31,7 @@ app.post("/login", async (req, res) => {
     if (result.success) {
         return res.json(result)
     } else {
-        return res.status(400).json(result)
+        return res.json(result)
     }
 })
 
@@ -47,7 +47,7 @@ app.post("/signup", async (req, res) => {
         emailComponent.sendConfirmationEmail(user.email, user.token)
         return res.json(result)
     } else {
-        return res.status(400).json(result)
+        return res.json(result)
     }
 })
 
@@ -144,56 +144,35 @@ app.post('/forgot-password', async (req, res) => {
         emailComponent.sendResetPasswordEmail(email, user.token)
     }
 
-    return res.json({ message: "Se l'indirizzo è corretto un'email per il reset è stata mandata" })
+    return res.json({ message: "Se l'indirizzo è corretto un'email per il reset è stata inviata" })
 })
 
 app.get('/reset-password', async (req, res) => {
     const { token } = req.query
 
-    try {
-        const decoded = jwt.verify(token, configs.JWT_SECRET)
-        const email = decoded.email
+    const result = usersComponent.getUserFromToken(token)
 
-        const user = usersComponent.getUser(email)
-
-        if (!user) {
-            return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
-        }
-
-        if (user.token !== token) {
-            return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
-        }
-
-        return res.sendFile(join(__dirname, "../public/html/resetPassword.html"))
-    } catch (error) {
+    if (!result.success) {
         return res.sendFile(join(__dirname, "../public/html/invalidLink.html"))
     }
+
+    return res.sendFile(join(__dirname, "../public/html/resetPassword.html"))
 })
 
 app.post('/reset-password', async (req, res) => {
     const { token, password } = req.body
 
-    try {
-        const decoded = jwt.verify(token, configs.JWT_SECRET)
-        const email = decoded.email
+    const result = usersComponent.getUserFromToken(token)
 
-        const user = usersComponent.getUser(email)
-        if (!user) {
-            return res.status(400).json({ success: false, message: "Utente sconosciuto" })
-        }
-
-        if (user.token !== token) {
-            return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
-        }
-
-        usersComponent.updateUserPassword(email, password)
-
-        usersComponent.invalidateUserToken(email)
-
-        res.json({ success: true, message: "Nuova password impostata" })
-    } catch (error) {
-        return res.status(400).json({ success: false, message: "Link non valido o scaduto" })
+    if (!result.success) {
+        return res.json({ success: false, message: "Link non valido o scaduto" })
     }
+
+    const user = result.user
+
+    usersComponent.updateUserPassword(user.email, password)
+
+    return res.json({ success: true, message: "Nuova password impostata" })
 })
 
 app.use((req, res) => {

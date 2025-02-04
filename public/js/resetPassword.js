@@ -1,45 +1,18 @@
-const resetPasswordPasswordField = document.getElementById('resetPasswordPassword')
-const resetPasswordConfirmPasswordField = document.getElementById('resetPasswordConfirmPassword')
-const toggleResetPasswordPassword = document.getElementById('toggleResetPasswordPassword')
-const toggleResetPasswordConfirmPassword = document.getElementById('toggleResetPasswordConfirmPassword')
-const confirmPasswordMessage = document.getElementById('confirmPasswordMessage')
-const resetPasswordButton = document.querySelector('button[type="submit"]')
-const form = document.getElementById("form-reset")
-const resetPasswordP = document.getElementById('resetPasswordP')
+const resetPasswordPasswordField         = document.getElementById("resetPasswordPassword")
+const resetPasswordConfirmPasswordField  = document.getElementById("resetPasswordConfirmPassword")
+const toggleResetPasswordPassword        = document.getElementById("toggleResetPasswordPassword")
+const toggleResetPasswordConfirmPassword = document.getElementById("toggleResetPasswordConfirmPassword")
+const confirmPasswordMessage             = document.getElementById("confirmPasswordMessage")
+const resetPasswordSubmitButton          = document.getElementById("resetPasswordSubmitButton")
+const resetPasswordForm                  = document.getElementById("resetPasswordForm")
+const resetPasswordP                     = document.getElementById("resetPasswordP")
 
-document.addEventListener("DOMContentLoaded", function () {
-    const urlParams = new URLSearchParams(window.location.search)
-    const token = urlParams.get("token")
-
-    if (!token) {
-        window.location.href = "/404" // Reindirizza a una pagina di errore
-        return
-    }
-
-    // Crea un input nascosto per il token
-    const hiddenTokenInput = document.createElement("input")
-    hiddenTokenInput.type = "hidden"
-    hiddenTokenInput.name = "token"
-    hiddenTokenInput.id = "token"
-    hiddenTokenInput.value = token
-
-    form.appendChild(hiddenTokenInput)
-})
-
-document.getElementById("reset-submit").addEventListener("click", async (event) => {
+resetPasswordForm.addEventListener("submit", async (event) => {
     event.preventDefault()
-    const password = resetPasswordPasswordField.value
-    const confirmPassword = resetPasswordConfirmPasswordField.value
 
-    if (!password || !confirmPassword) return
-
-
-    const token = document.getElementById('token').value
-
-    if (!token) {
-        toastr.error("Email sconosciuta.")
-        return
-    }
+    const urlParams = new URLSearchParams(window.location.search)
+    const token     = urlParams.get("token")
+    const password  = resetPasswordPasswordField.value
 
     try {
         const response = await fetch("/reset-password", {
@@ -48,33 +21,39 @@ document.getElementById("reset-submit").addEventListener("click", async (event) 
             body: JSON.stringify({ token, password })
         })
 
-        const text = await response.text()
-        const data = JSON.parse(text)
+        if (!response.ok) {
+            throw new Error(`Errore HTTP: ${response.status}`)
+        }
+
+        const data = await response.json()
 
         if (data.success) {
-            form.style.display = 'none'
-            resetPasswordP.textContent = "Password modificata con successo"
+            resetPasswordForm.style.display = "none"
             resetPasswordP.style.color = "green"
+            resetPasswordP.textContent = "Password modificata con successo"
+
+            window.history.replaceState(null, "", window.location.pathname);
         } else {
             toastr.error(data.message)
         }
     } catch (error) {
+        console.error("Errore durante reset-password:", error)
         toastr.error("Errore di connessione. Riprova.")
     }
 })
 
-toggleResetPasswordPassword.addEventListener('click', () => 
+toggleResetPasswordPassword.addEventListener("click", () => 
     togglePasswordVisibility(resetPasswordPasswordField, toggleResetPasswordPassword)
 )
 
-toggleResetPasswordConfirmPassword.addEventListener('click', () => 
+toggleResetPasswordConfirmPassword.addEventListener("click", () => 
     togglePasswordVisibility(resetPasswordConfirmPasswordField, toggleResetPasswordConfirmPassword)
 )
 
 resetPasswordPasswordField.addEventListener("input", () => 
-    checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, resetPasswordButton)
+    checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, resetPasswordSubmitButton)
 )
 
 resetPasswordConfirmPasswordField.addEventListener("input", () => 
-    checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, resetPasswordButton)
+    checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, resetPasswordSubmitButton)
 )

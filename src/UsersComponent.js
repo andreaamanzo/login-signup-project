@@ -1,5 +1,5 @@
 const fs = require("fs")
-const { generateToken, hashPassword, comparePasswords } = require("./utils")
+const { generateToken, decodeToken, hashPassword, comparePasswords } = require("./utils")
 
 class UsersComponent {
     constructor(statePath) {
@@ -19,6 +19,23 @@ class UsersComponent {
 
     getUser(email) {
         return this.users.find(u => u.email === email)
+    }
+
+    getUserFromToken(token) {
+        const result = decodeToken(token)
+
+        if (!result.success) {
+            return { success: false, user: null }
+        }
+
+        const email = result.decoded.email
+        const user  = this.getUser(email)
+
+        if (user.token !== token) {
+            return { success: false, user: null }
+        }
+
+        return { success: true, user}
     }
 
     setUserToken(email) {
@@ -56,6 +73,7 @@ class UsersComponent {
         }
 
         user.password = await hashPassword(password)
+        this.invalidateUserToken(email)
         this.serialize()
         
         return { success: true, message: "Password modificata con successo" }

@@ -144,18 +144,6 @@ p.home-p {
   gap: 20px;
 }
 
-.a-button {
-  min-width: 120px;
-  padding: 12px 20px;
-  background-color: #3498db;
-  color: #fff;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 1.2em;
-  transition: background-color 0.3s ease;
-}
-
 .a-button:hover {
   background-color: #2980b9;
 }
