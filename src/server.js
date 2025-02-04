@@ -139,14 +139,12 @@ app.post('/forgot-password', async (req, res) => {
 
     const user = usersComponent.getUser(email)
 
-    if (!user || !user?.verified) {
-        return res.status(400).json({ success: false, message: "Email non collegata a nessun utente" })
+    if (user && user?.verified) {
+        usersComponent.setUserToken(email)
+        emailComponent.sendResetPasswordEmail(email, user.token)
     }
 
-    usersComponent.setUserToken(email)
-    emailComponent.sendResetPasswordEmail(email, user.token)
-
-    return res.json({ success: true, message: "Email di reset password inviata" })
+    return res.json({ message: "Se l'indirizzo è corretto un'email per il reset è stata mandata" })
 })
 
 app.get('/reset-password', async (req, res) => {
