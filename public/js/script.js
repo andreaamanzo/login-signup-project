@@ -27,3 +27,21 @@ function checkPasswords(passwordField, confirmPasswordField, messageElement, sub
         confirmPasswordField.classList.remove("input-error")
     }
 }
+function checkPassword(password){
+    
+    const passwordLengthMin = 8 
+    const hasMinLength = (password.length>=passwordLengthMin)
+    const hasUpperCase = /[A-Z]/.test(password)
+    const hasLowerCase = /[a-z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+
+    return{
+        hasMinLength,
+        hasUpperCase,
+        hasLowerCase,
+        hasNumber,
+        hasSpecialChar
+    }
+
+}
