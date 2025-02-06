@@ -56,6 +56,11 @@ app.get("/welcome", (req, res) => {
 })
 
 app.get('/signup-confirmation', async (req, res) => {
+    const { email } = req.query
+
+    if (!email) {
+        return res.sendFile(join(__dirname, "../public/html/404.html"))
+    }
     res.sendFile(join(__dirname, "../public/html/signupConfirmation.html"))
 })
 
@@ -111,17 +116,10 @@ app.get("/verified-email", (req, res) => {
 
 app.post("/resend-email", async (req, res) => {
     const { email } = req.body
-    if (!email) {
-        return res.status(400).json({ success: false, message: "Email richiesta" })
-    }
 
     const user = usersComponent.getUser(email)
     if (!user) {
-        return res.status(404).json({ success: false, message: "Utente non trovato" })
-    }
-
-    if (user.verified) {
-        return res.status(400).json({ success: false, message: "Email già verificata" })
+        return res.json({ success: false, message: "Utente non trovato" })
     }
 
     usersComponent.setUserToken(user.email)

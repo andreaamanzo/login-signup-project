@@ -1,4 +1,4 @@
-const resend = document.getElementById("resend")
+const resendEmail = document.getElementById("resendEmail")
 const sentEmailP = document.getElementById('sentEmailP')
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -8,22 +8,15 @@ document.addEventListener("DOMContentLoaded", function () {
     sentEmailP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per verificare la tua Email`
 })
 
-resend.addEventListener("click", async (event) => {
+resendEmail.addEventListener("click", async (event) => {
     event.preventDefault()
 
-    if (resend.style.pointerEvents == "none") {
+    if (resendEmail.style.pointerEvents == "none") {
         return
     }
-    resend.style.pointerEvents = "none"
-    resend.textContent = "Attendi..."
-
+    
     const email = new URLSearchParams(window.location.search).get("email")
-
-    if (!email) {
-        toastr.error("Email non trovata.")
-        return
-    }
-
+    
     try {
         const response = await fetch("/resend-email", {
             method: "POST",
@@ -31,21 +24,26 @@ resend.addEventListener("click", async (event) => {
             body: JSON.stringify({ email })
         })
 
-        const text = await response.text()
-        const data = JSON.parse(text)
-
-        if (data.success) {
-            toastr.success(data.message)
-        } else {
-            toastr.error(data.message)
+        if (!response.ok) {
+            throw new Error(`Errore HTTP: ${response.status}`)
         }
+
+        const data = await response.json()
+        
+        if (data.success) {
+            toastr.success("Email inviata con successo!")
+        } 
     } catch (error) {
-        toastr.error("Errore di connessione. Riprova.")
+        console.error(error)
+        toastr.error("Errore inaspettato")
     }
+    
+    resendEmail.style.pointerEvents = "none"
+    resendEmail.textContent = "Attendi..."
 
     setTimeout(() => {
-        resend.style.pointerEvents = "auto"
-        resend.textContent = "Rimanda Email"
+        resendEmail.style.pointerEvents = "auto"
+        resendEmail.textContent = "Rimanda Email"
     }, 7000)
 })
 

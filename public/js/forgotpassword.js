@@ -67,3 +67,4 @@ resendLink.addEventListener("click", async (event) => {
         resendLink.textContent = "Rimanda Email"
     }, 7000)
 })
+
