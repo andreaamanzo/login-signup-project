@@ -32,7 +32,7 @@ class UsersComponent {
         const user  = this.getUser(email)
 
         if (user.token !== token) {
-            return { success: false, user: null }
+            return { success: false, user }
         }
 
         return { success: true, user}
