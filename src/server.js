@@ -26,12 +26,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", async (req, res) => {
     const result = await usersComponent.login(req.body.email, req.body.password)
-
-    if (result.success) {
-        return res.json(result)
-    } else {
-        return res.json(result)
-    }
+    return res.json(result)
 })
 
 app.get("/signup", (req, res) => {
