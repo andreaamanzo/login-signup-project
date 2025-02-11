@@ -14,18 +14,20 @@ function togglePasswordVisibility(inputField, toggleIcon) {
     toggleIcon.classList.toggle("fa-eye-slash")
 }
 
-function checkPasswords(passwordField, confirmPasswordField, messageElement, submitButton) {
-    if (passwordField.value !== confirmPasswordField.value && confirmPasswordField.value != "") {
+function setPasswordError(passwordField, confirmPasswordField, messageElement, setError) {
+    if (setError) {
         messageElement.style.display = "block"
-        submitButton.disabled = true
         passwordField.classList.add("input-error")
         confirmPasswordField.classList.add("input-error")
     } else {
         messageElement.style.display = "none"
-        submitButton.disabled = false
         passwordField.classList.remove("input-error")
         confirmPasswordField.classList.remove("input-error")
     }
+}
+
+function checkPasswords(passwordField, confirmPasswordField) {
+    return (passwordField.value === confirmPasswordField.value) 
 }
 
 function isValidPassword(password) {

@@ -1,10 +1,11 @@
-const title               = document.getElementById("title")
-const forgotPasswordForm  = document.getElementById("forgotPasswordForm")
-const forgotPasswordEmail = document.getElementById("forgotPasswordEmail")
-const messageP            = document.getElementById("messageP")
-const resendEmailP        = document.getElementById("resendEmailP")
-const resendLink          = document.getElementById("resendLink")
-const newEmailP           = document.getElementById("newEmailP")
+const title                = document.getElementById("title")
+const forgotPasswordForm   = document.getElementById("forgotPasswordForm")
+const forgotPasswordEmail  = document.getElementById("forgotPasswordEmail")
+const messageP             = document.getElementById("messageP")
+const resendEmailP         = document.getElementById("resendEmailP")
+const resendLink           = document.getElementById("resendLink")
+const forgotPasswordButton = document.getElementById("forgotPasswordButton")
+const toLoginButton        = document.getElementById("toLoginButton")
 
 async function sendEmail (email) {
     try {
@@ -29,18 +30,27 @@ async function sendEmail (email) {
 forgotPasswordForm.addEventListener("submit", async (event) => {
     event.preventDefault() 
 
+    forgotPasswordButton.disabled = true
+    forgotPasswordForm.style.opacity = 0.5
+    forgotPasswordButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
+
     const email = forgotPasswordEmail.value
-    const success = await sendEmail(email)
+    
+    setTimeout(async () => {
+        const success = await sendEmail(email)
+        forgotPasswordButton.disabled = false
+        forgotPasswordButton.innerHTML = "Invia Email"
+        forgotPasswordForm.style.opacity = 1
+        if (!success) {
+            return 
+        }
+        forgotPasswordForm.style.display = "none"
+        resendEmailP.style.display = "block"
+        toLoginButton.style.display = "block"
+        title.innerText = "Email di ripristino inviata"
+        messageP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per impostare una nuova password`
+    }, 600)
 
-    if (!success) {
-        return 
-    }
-
-    forgotPasswordForm.style.display = "none"
-    resendEmailP.style.display = "block"
-    newEmailP.style.display = "block"
-    title.innerText = "Email di ripristino inviata"
-    messageP.innerHTML = `Utilizza il link inviato all'indirizzo <br><a href="mailto:${email}">${email}</a><br> per impostare una nuova password`
 })
 
 resendLink.addEventListener("click", async (event) => {

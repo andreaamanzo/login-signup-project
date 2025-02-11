@@ -3,7 +3,7 @@ const { generateToken, decodeToken, hashPassword, comparePasswords } = require("
 
 class UsersComponent {
     constructor(statePath) {
-        this.users = []
+        this.users = {}
         this.statePath = statePath
         try {
             this.users = JSON.parse(fs.readFileSync(statePath, "utf-8"))
@@ -18,7 +18,7 @@ class UsersComponent {
     }
 
     getUser(email) {
-        return this.users.find(u => u.email === email)
+        return this.users[email]
     }
 
     getUserFromToken(token) {
@@ -105,7 +105,7 @@ class UsersComponent {
             verified: false 
         }
 
-        this.users.push(user)
+        this.users[email] = user
         this.setUserToken(email)
         this.serialize()
         

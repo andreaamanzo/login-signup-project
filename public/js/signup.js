@@ -4,46 +4,61 @@ const signupEmailField            = document.getElementById("signupEmail")
 const signupConfirmPasswordField  = document.getElementById("signupConfirmPassword")
 const toggleSignupPassword        = document.getElementById("toggleSignupPassword")
 const toggleSignupConfirmPassword = document.getElementById("toggleSignupConfirmPassword")
-const signupSubmitButton          = document.getElementById("signupSubmitButton")
 const confirmPasswordMessage      = document.getElementById("confirmPasswordMessage")
 const errorMessage                = document.getElementById("errorMessage")
+const signupButton                = document.getElementById("signupSubmitButton")
 
 signupForm.addEventListener("submit", async (event) => {
     event.preventDefault()
 
-    const email    = signupEmailField.value
-    const password = signupPasswordField.value
-
-    try {
-        const response = await fetch("/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        })
-
-        if (!response.ok) {
-            throw new Error(`Errore HTTP: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        if (data.success) {
-            window.location.href = `/signup-confirmation?email=${encodeURIComponent(email)}`
-        } else {
-            errorMessage.textContent = "Email già in uso"
-            errorMessage.style.display = "inline-block"
-            signupEmailField.classList.add("input-error")
-        }
-    } catch (error) {
-        console.error("Errore durante il signup:", error)
-        toastr.error("Errore inaspettato")
-    }
-})
-
-signupEmailField.addEventListener("input", () => {
     signupEmailField.classList.remove("input-error")
     errorMessage.style.display = "none"
+
+    setPasswordError(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, false)
+
+    signupButton.disabled = true
+    signupForm.style.opacity = 0.5
+    signupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'
+
+    setTimeout(async () => {
+        try {
+            if (!checkPasswords(signupPasswordField, signupConfirmPasswordField)) {
+                setPasswordError(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, true)
+                return
+            }
+        
+            const email = signupEmailField.value
+            const password = signupPasswordField.value
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            })
+
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`)
+            }
+
+            const data = await response.json()
+
+            if (data.success) {
+                window.location.href = `/signup-confirmation?email=${encodeURIComponent(email)}`
+            } else {
+                errorMessage.textContent = "Email già in uso"
+                errorMessage.style.display = "inline-block"
+                signupEmailField.classList.add("input-error")
+            }
+        } catch (error) {
+            console.error("Errore durante il signup:", error)
+            toastr.error("Errore inaspettato")
+        } finally {
+            signupButton.disabled = false
+            signupButton.innerHTML = "Registrati"
+            signupForm.style.opacity = 1
+        }
+    }, 600)
 })
+
 
 toggleSignupPassword.addEventListener("click", () => 
     togglePasswordVisibility(signupPasswordField, toggleSignupPassword)
@@ -51,12 +66,4 @@ toggleSignupPassword.addEventListener("click", () =>
 
 toggleSignupConfirmPassword.addEventListener("click", () => 
     togglePasswordVisibility(signupConfirmPasswordField, toggleSignupConfirmPassword)
-)
-
-signupPasswordField.addEventListener("input", () => 
-    checkPasswords(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, signupSubmitButton)
-)
-
-signupConfirmPasswordField.addEventListener("input", () => 
-    checkPasswords(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, signupSubmitButton)
 )

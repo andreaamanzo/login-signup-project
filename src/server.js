@@ -1,6 +1,5 @@
 const express        = require("express")
 const join           = require("path").join
-const jwt            = require('jsonwebtoken')
 const configs        = require("./configs")
 const UsersComponent = require("./UsersComponent")
 const EmailComponent = require("./EmailComponent")
