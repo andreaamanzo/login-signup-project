@@ -7,6 +7,9 @@ const toggleSignupConfirmPassword = document.getElementById("toggleSignupConfirm
 const confirmPasswordMessage      = document.getElementById("confirmPasswordMessage")
 const errorMessage                = document.getElementById("errorMessage")
 const signupButton                = document.getElementById("signupSubmitButton")
+const strengthMeter               = document.querySelector(".strength-meter div")
+const infoIcon                    = document.querySelector(".info-icon");
+const tooltip                     = document.getElementById("passwordTooltip")
 
 signupForm.addEventListener("submit", async (event) => {
     event.preventDefault()
@@ -59,7 +62,6 @@ signupForm.addEventListener("submit", async (event) => {
     }, 600)
 })
 
-
 toggleSignupPassword.addEventListener("click", () => 
     togglePasswordVisibility(signupPasswordField, toggleSignupPassword)
 )
@@ -67,3 +69,17 @@ toggleSignupPassword.addEventListener("click", () =>
 toggleSignupConfirmPassword.addEventListener("click", () => 
     togglePasswordVisibility(signupConfirmPasswordField, toggleSignupConfirmPassword)
 )
+
+signupPasswordField.addEventListener("input", () => {
+    const password = signupPasswordField.value
+    const strength = calcPasswordStrength(password)
+    setStrengthMeter(strengthMeter, strength)
+})
+
+infoIcon.addEventListener("mouseenter", () => {
+    tooltip.classList.add("show");
+});
+
+infoIcon.addEventListener("mouseleave", () => {
+    tooltip.classList.remove("show");
+})

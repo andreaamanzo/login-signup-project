@@ -22,8 +22,18 @@
         <input type="email" id="signupEmail" name="email" placeholder="Email" required="required" />
       </div>
       <div class="input-wrapper">
-        <input type="password" id="signupPassword" name="password" placeholder="Password" required="required" />
+        <input type="password" id="signupPassword" name="password" placeholder="Password" 
+          required 
+          minlength="8" maxlength="32"
+          pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$"
+          oninvalid="this.setCustomValidity('La password deve essere lunga almeno 8 caratteri, contenere una maiuscola, una minuscola, un numero e un carattere speciale (@$!%*?&)')"
+          oninput="this.setCustomValidity('')"/>
         <i class="fas fa-eye" id="toggleSignupPassword"></i>
+      </div>
+      <div class="strength-meter-container">
+        <div class="tooltip" id="passwordTooltip">La password deve avere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale (@$!%*?&)</div>
+        <i class="fas fa-info-circle info-icon"></i>
+        <div class="strength-meter"><div></div></div>
       </div>
       <div class="input-wrapper">
         <input type="password" id="signupConfirmPassword" name="confirmPassword" placeholder="Conferma password" required="required" />

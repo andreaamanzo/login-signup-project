@@ -30,20 +30,21 @@ function checkPasswords(passwordField, confirmPasswordField) {
     return (passwordField.value === confirmPasswordField.value) 
 }
 
-function isValidPassword(password) {
-    const passwordLengthMin = 8 
+function calcPasswordStrength(password) {
+    const passwordMinLength = 8 
 
-    const hasMinLength   = (password.length >= passwordLengthMin)
-    const hasUpperCase   = /[A-Z]/.test(password)
-    const hasLowerCase   = /[a-z]/.test(password)
-    const hasNumber      = /[0-9]/.test(password)
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    let strength = 0;
 
-    return {
-        hasMinLength,
-        hasUpperCase,
-        hasLowerCase,
-        hasNumber,
-        hasSpecialChar
-    }
+    if (password.length >= passwordMinLength) strength++; // Lunghezza minima
+    if (/[A-Z]/.test(password)) strength++; // Almeno una maiuscola
+    if (/[a-z]/.test(password)) strength++; // Almeno una minuscola
+    if (/\d/.test(password)) strength++; // Almeno un numero
+    if (/[@$!%*?&]/.test(password)) strength++; // Almeno un carattere speciale
+
+    return strength
+}
+
+function setStrengthMeter(strengthMeter, strength) {
+    const width = (strength / 5) * 100;
+    strengthMeter.style.width = width + "%";
 }
