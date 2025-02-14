@@ -8,7 +8,7 @@ const confirmPasswordMessage      = document.getElementById("confirmPasswordMess
 const errorMessage                = document.getElementById("errorMessage")
 const signupButton                = document.getElementById("signupSubmitButton")
 const strengthMeter               = document.querySelector(".strength-meter div")
-const infoIcon                    = document.querySelector(".info-icon");
+const infoIcon                    = document.querySelector(".info-icon")
 const tooltip                     = document.getElementById("passwordTooltip")
 
 signupForm.addEventListener("submit", async (event) => {
@@ -77,9 +77,15 @@ signupPasswordField.addEventListener("input", () => {
 })
 
 infoIcon.addEventListener("mouseenter", () => {
-    tooltip.classList.add("show");
-});
+    tooltip.classList.add("show")
+})
 
 infoIcon.addEventListener("mouseleave", () => {
-    tooltip.classList.remove("show");
+    tooltip.classList.remove("show")
+})
+
+signupConfirmPasswordField.addEventListener("input", () => {
+    if (checkPasswords(signupPasswordField, signupConfirmPasswordField)) {
+        setPasswordError(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, false)
+    }
 })

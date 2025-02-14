@@ -8,7 +8,7 @@ const resetPasswordP                     = document.getElementById("resetPasswor
 const resetPasswordButton                = document.getElementById("resetPasswordButton")
 const toLoginButton                      = document.getElementById("toLoginButton")
 const strengthMeter                      = document.querySelector(".strength-meter div")
-const infoIcon                           = document.querySelector(".info-icon");
+const infoIcon                           = document.querySelector(".info-icon")
 const tooltip                            = document.getElementById("passwordTooltip")
 
 resetPasswordForm.addEventListener("submit", async (event) => {
@@ -78,9 +78,15 @@ resetPasswordPasswordField.addEventListener("input", () => {
 })
 
 infoIcon.addEventListener("mouseenter", () => {
-    tooltip.classList.add("show");
-});
+    tooltip.classList.add("show")
+})
 
 infoIcon.addEventListener("mouseleave", () => {
-    tooltip.classList.remove("show");
+    tooltip.classList.remove("show")
+})
+
+resetPasswordConfirmPasswordField.addEventListener("input", () => {
+    if (checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField)) {
+        setPasswordError(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, false)
+    }
 })

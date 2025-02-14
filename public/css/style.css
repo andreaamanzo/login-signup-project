@@ -263,7 +263,7 @@ input:-webkit-autofill:active {
   height: 100%;
   width: 0%;
   background: #196dc1d6;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease-out;
 }
 
 .info-icon {

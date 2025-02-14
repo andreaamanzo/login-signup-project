@@ -33,18 +33,18 @@ function checkPasswords(passwordField, confirmPasswordField) {
 function calcPasswordStrength(password) {
     const passwordMinLength = 8 
 
-    let strength = 0;
+    let strength = 0
 
-    if (password.length >= passwordMinLength) strength++; // Lunghezza minima
-    if (/[A-Z]/.test(password)) strength++; // Almeno una maiuscola
-    if (/[a-z]/.test(password)) strength++; // Almeno una minuscola
-    if (/\d/.test(password)) strength++; // Almeno un numero
-    if (/[@$!%*?&]/.test(password)) strength++; // Almeno un carattere speciale
+    if (password.length >= passwordMinLength) strength++ // Lunghezza minima
+    if (/[A-Z]/.test(password)) strength++ // Almeno una maiuscola
+    if (/[a-z]/.test(password)) strength++ // Almeno una minuscola
+    if (/\d/.test(password)) strength++ // Almeno un numero
+    if (/[@$!%*?&]/.test(password)) strength++ // Almeno un carattere speciale
 
     return strength
 }
 
 function setStrengthMeter(strengthMeter, strength) {
-    const width = (strength / 5) * 100;
-    strengthMeter.style.width = width + "%";
+    const width = (strength / 5) * 100
+    strengthMeter.style.width = width + "%"
 }
