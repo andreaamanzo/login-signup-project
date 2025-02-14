@@ -1,29 +1,56 @@
 const nodemailer = require('nodemailer')
-const join = require("path").join
+const join = require('path').join
 const fs = require('fs')
-const configs = require("./configs")
+const mjml = require('mjml')
+const configs = require('./configs')
 
 class EmailComponent {
     constructor() {
         this.transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-              user: configs.EMAIL, 
-              pass: configs.EMAIL_PASSWORD
-          }
+            service: 'gmail',
+            auth: {
+                user: configs.EMAIL,
+                pass: configs.EMAIL_PASSWORD,
+            },
         })
+
+        // Carica e converte i template MJML in HTML al momento dell'inizializzazione
+        this.templates = this.loadAndConvertTemplates()
+    }
+
+    loadAndConvertTemplates() {
+        const templatesDir = join(__dirname, '../email_templates')
+        const templates = {}
+
+        // Leggi tutti i file nella directory dei template
+        fs.readdirSync(templatesDir).forEach((file) => {
+            if (file.endsWith('.mjml')) {
+                const templateName = file.replace('.mjml', '')
+                const mjmlPath = join(templatesDir, file)
+
+                const mjmlTemplate = fs.readFileSync(mjmlPath, 'utf8')
+                const htmlTemplate = mjml(mjmlTemplate).html
+
+                templates[templateName] = htmlTemplate
+            }
+        })
+
+        return templates
     }
 
     loadTemplate(templateName, replacements) {
-        const templatePath = join(__dirname, '../email_templates', `${templateName}.html`)
-        let template = fs.readFileSync(templatePath, 'utf8')
-    
+        let template = this.templates[templateName]
+
+        if (!template) {
+            throw new Error(`Template "${templateName}" non trovato`)
+        }
+
         // Sostituisce i placeholder con i valori reali
-        Object.keys(replacements).forEach(key => {
+        Object.keys(replacements).forEach((key) => {
             const regex = new RegExp(`{{${key}}}`, 'g')
             template = template.replace(regex, replacements[key])
         })
-    
+
         return template
     }
 
@@ -34,32 +61,36 @@ class EmailComponent {
             console.error('Errore nell’invio dell’email:', error)
         }
     }
-    
+
     async sendConfirmationEmail(to, token) {
         const confirmationUrl = `http://${configs.SITE_HOST}:${configs.PORT}/verify-email?token=${token}`
-        const htmlContent = this.loadTemplate('confirmation_email', { CONFIRMATION_URL: confirmationUrl })
-    
+        const htmlContent = this.loadTemplate('confirmation_email', {
+            CONFIRMATION_URL: confirmationUrl,
+        })
+
         const mailOptions = {
             from: `"LS-Project" <${configs.EMAIL}>`,
             to: to,
             subject: 'Conferma la tua email',
-            html: htmlContent
+            html: htmlContent,
         }
-    
+
         return await this.sendEmail(mailOptions)
     }
-    
+
     async sendResetPasswordEmail(to, token) {
         const resetPasswordUrl = `http://${configs.SITE_HOST}:${configs.PORT}/reset-password?token=${token}`
-        const htmlContent = this.loadTemplate('reset_password_email', { RESET_PASSWORD_URL: resetPasswordUrl })
-    
+        const htmlContent = this.loadTemplate('reset_password_email', {
+            RESET_PASSWORD_URL: resetPasswordUrl,
+        })
+
         const mailOptions = {
             from: `"LS-Project" <${configs.EMAIL}>`,
             to: to,
             subject: 'Reset password',
-            html: htmlContent
+            html: htmlContent,
         }
-    
+
         return await this.sendEmail(mailOptions)
     }
 }
