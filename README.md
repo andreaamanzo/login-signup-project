@@ -9,13 +9,6 @@ This repository contains a basic user system for a web application.
 
 3. Create a new app password with "email" as the app name
 
-4. Fill in your own .env with your Gmail email and it's specific app password:
-    ```bash
-    EMAIL = "YourEmail@gmail.com"
-    ``` 
-    ```bash
-    EMAIL_PASSWORD = **** **** **** ****
-    ```
 ## Installation
 
 1. Install the dependencies:
@@ -24,11 +17,20 @@ This repository contains a basic user system for a web application.
     npm install
     ```
 
-2. In your .env file will also need:
+3. Copy the .env.example file to a new file named `.env`.
+
     ```bash
-    JWT_SECRET = A random alphanumeric code 
-    SITE_HOST = Localhost or your own provider
-    PORT = The port you are hosting on
+    cp .env.example .env
+    ```
+
+4. Open the `.env` file and replace the placeholders:
+
+    ```bash
+    EMAIL='your_email_here_'
+    EMAIL_PASSWORD='your_app_password_here'
+    JWT_SECRET = 'yout_random_jwt_secret'
+    SITE_HOST = 'localhost'
+    PORT = '8080'
     ```
 ## How to Use the code
 
