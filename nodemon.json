@@ -1,9 +1,8 @@
 {
     "watch": [
       "src",
-      "public",
-      "email_templates"
+      "public"
     ],
-    "ext": "js,json,html,css,mjml",
+    "ext": "js,json,html,css",
     "exec": "npm start"
-  }
+}

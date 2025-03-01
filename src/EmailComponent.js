@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer')
 const join = require('path').join
 const fs = require('fs')
-const mjml = require('mjml')
 const configs = require('./configs')
 
 class EmailComponent {
@@ -13,33 +12,11 @@ class EmailComponent {
                 pass: configs.EMAIL_PASSWORD,
             },
         })
-
-        // Carica e converte i template MJML in HTML al momento dell'inizializzazione
-        this.templates = this.loadAndConvertTemplates()
-    }
-
-    loadAndConvertTemplates() {
-        const templatesDir = join(__dirname, '../email_templates')
-        const templates = {}
-
-        // Leggi tutti i file nella directory dei template
-        fs.readdirSync(templatesDir).forEach((file) => {
-            if (file.endsWith('.mjml')) {
-                const templateName = file.replace('.mjml', '')
-                const mjmlPath = join(templatesDir, file)
-
-                const mjmlTemplate = fs.readFileSync(mjmlPath, 'utf8')
-                const htmlTemplate = mjml(mjmlTemplate).html
-
-                templates[templateName] = htmlTemplate
-            }
-        })
-
-        return templates
     }
 
     loadTemplate(templateName, replacements) {
-        let template = this.templates[templateName]
+        const templatePath = join(__dirname, '../email_templates', `${templateName}.html`)
+        let template = fs.readFileSync(templatePath, 'utf8')
 
         if (!template) {
             throw new Error(`Template "${templateName}" non trovato`)
