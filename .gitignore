@@ -3,3 +3,4 @@ state.json
 .env
 testEmail.js
 email_templates/*.html
+info.txt
