@@ -1,5 +1,5 @@
+const argon2 = require('argon2')
 const jwt = require('jsonwebtoken')
-const bcrypt = require("bcrypt")
 const configs = require("./configs")
 
 function generateToken(email) {
@@ -16,14 +16,25 @@ function decodeToken(token) {
 }
 
 async function hashPassword(password) {
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await argon2.hash(password, {
+        type: argon2.argon2id,  // Usa il tipo Argon2id
+        memoryCost: 2 ** 16,    // 64MB di RAM usati per l'hashing
+        timeCost: 3,            // Numero di iterazioni
+        parallelism: 1          // Numero di thread
+    })
+    
     const base64HashedPassword = Buffer.from(hashedPassword).toString('base64')
 
     return base64HashedPassword
 }
 
-async function comparePasswords (clearPassword, hashedPassword) {
-    return await bcrypt.compare(clearPassword, Buffer.from(hashedPassword, 'base64').toString('utf-8'))
+async function comparePasswords(clearPassword, hashedPassword) {
+    try {
+        const match = await argon2.verify(Buffer.from(hashedPassword, 'base64').toString('utf-8'), clearPassword)
+        return match
+    } catch (err) {
+        return false
+    }
 }
 
 module.exports = {
