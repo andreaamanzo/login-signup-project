@@ -5,7 +5,11 @@ const {
     EMAIL_PASSWORD,
     JWT_SECRET,
     SITE_HOST,
-    PORT
+    PORT,
+    DB_HOST,
+    DB_USER,
+    DB_PASSWORD,
+    DB_NAME
 } = process.env
 
 module.exports = { 
@@ -13,5 +17,9 @@ module.exports = {
     EMAIL_PASSWORD, 
     JWT_SECRET, 
     SITE_HOST,
-    PORT
+    PORT,
+    DB_HOST,
+    DB_USER,
+    DB_PASSWORD,
+    DB_NAME
 }

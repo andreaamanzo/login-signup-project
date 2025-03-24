@@ -1,0 +1,16 @@
+services:
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: node-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app      # Mount della cartella locale nel container
+      - /usr/src/app/node_modules  # Per non sovrascrivere node_modules
+    command: npm run dev    # Lancia nodemon
+    depends_on:
+      - mysql-container
+    networks:
+      - my-network

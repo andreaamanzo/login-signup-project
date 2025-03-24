@@ -1,134 +1,84 @@
-const fs = require("fs")
 const { generateToken, decodeToken, hashPassword, comparePasswords } = require("./utils")
+const { pool } = require("./db")
 
 class UsersComponent {
-    constructor(statePath) {
-        this.users = {}
-        this.statePath = statePath
-        try {
-            this.users = JSON.parse(fs.readFileSync(statePath, "utf-8"))
-        } catch(err) {
-            console.error(err.message)
-            this.serialize()
-        }
+  async getUser(email) {
+    console.log("in get user")
+    try {
+        const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+        return rows[0] || null
+    } catch (err) {
+        console.log("error in get user: ", err)
     }
+  }
 
-    serialize() {
-        fs.writeFileSync(this.statePath, JSON.stringify(this.users, null, 2))
-    }
+  async getUserFromToken(token) {
+    const result = decodeToken(token)
+    console.log(result)
+    if (!result.success) return { success: false, user: null }
 
-    getUser(email) {
-        return this.users[email]
-    }
+    const email = result.decoded.email
+    const [rows] = await pool.query("SELECT * FROM users WHERE email = ? AND token = ?", [email, token])
+    console.log("rows: ", rows)
+    console.log("fine rows")
+    if (rows.length === 0) return { success: false, user: null }
+    return { success: true, user: rows[0] }
+  }
 
-    getUserFromToken(token) {
-        const result = decodeToken(token)
+  async setUserToken(email) {
+    const token = generateToken(email)
+    const [result] = await pool.query("UPDATE users SET token = ? WHERE email = ?", [token, email])
+    if (result.affectedRows === 0) return { success: false, message: "Utente non trovato" }
+    return { success: true, token }
+  }
 
-        if (!result.success) {
-            return { success: false, user: null }
-        }
+  async invalidateUserToken(email) {
+    const [result] = await pool.query("UPDATE users SET token = NULL WHERE email = ?", [email])
+    if (result.affectedRows === 0) return { success: false, message: "Utente non trovato" }
+    return { success: true, message: "Token invalidato con successo" }
+  }
 
-        const email = result.decoded.email
-        const user  = this.getUser(email)
+  async updateUserPassword(email, password) {
+    const hashedPassword = await hashPassword(password)
+    const [result] = await pool.query("UPDATE users SET password = ?, token = NULL WHERE email = ?", [hashedPassword, email])
+    if (result.affectedRows === 0) return { success: false, message: "Utente non trovato" }
+    return { success: true, message: "Password modificata con successo" }
+  }
 
-        if (user.token !== token) {
-            return { success: false, user }
-        }
+  async updateVerificationStatus(email, verified) {
+    const [result] = await pool.query("UPDATE users SET verified = ?, token = NULL WHERE email = ?", [verified, email])
+    if (result.affectedRows === 0) return { success: false, message: "Utente non trovato" }
+    return { success: true, message: "Verification status aggiornato" }
+  }
 
-        return { success: true, user}
-    }
+  async create(email, password) {
+    console.log("in create")
+    const existingUser = await this.getUser(email)
+    console.log(existingUser)
+    if (existingUser) return { success: false, user: null, message: "Email già in uso" }
 
-    setUserToken(email) {
-        const user = this.getUser(email)
+    const hashedPassword = await hashPassword(password)
+    const token = generateToken(email)
 
-        if (!user) {
-            return { success: false, message: "Utente non trovato" }
-        }
+    await pool.query(
+      "INSERT INTO users (email, password, verified, token) VALUES (?, ?, false, ?)",
+      [email, hashedPassword, token]
+    )
 
-        const token = generateToken(email)
-        user.token = token
-        this.serialize()
+    const user = await this.getUser(email)
+    return { success: true, user, message: "Utente creato con successo" }
+  }
 
-        return { success: true, message: "Token impostato con successo" }
-    }
+  async login(email, password) {
+    const user = await this.getUser(email)
+    if (!user) return { success: false, user: null, message: "Utente non trovato" }
+    if (!user.verified) return { success: false, user, message: "Email non verificata" }
 
-    invalidateUserToken(email) {
-        const user = this.getUser(email)
+    const match = await comparePasswords(password, user.password)
+    if (!match) return { success: false, user, message: "Password errata" }
 
-        if (!user) {
-            return { success: false, message: "Utente non trovato" }
-        }
-
-        user.token = null
-        this.serialize()
-
-        return { success: true, message: "Token invalidato con successo" }
-    }
-
-    async updateUserPassword(email, password) {
-        const user = this.getUser(email)
-
-        if (!user) {
-            return { success: false, message: "Utente non trovato" }
-        }
-
-        user.password = await hashPassword(password)
-        this.invalidateUserToken(email)
-        this.serialize()
-        
-        return { success: true, message: "Password modificata con successo" }
-    }
-    
-    updateVerificationStatus(email, verified) {
-        const user = this.getUser(email)
-        if (!user) {  
-            return { success: false, message: "Utente non trovato" }
-        }
-
-        user.verified = verified
-        user.token = null
-        this.serialize()
-
-        return { success: true, message: "Verification status aggiornato" }
-    }
-
-    async create(email, password) {
-
-        if (this.getUser(email)) {
-            return { success: false, user: null, message: "Email già in uso" }
-        }
-
-        const user = {
-            email, 
-            password: await hashPassword(password),
-            token : null,
-            verified: false 
-        }
-
-        this.users[email] = user
-        this.setUserToken(email)
-        this.serialize()
-        
-        return { success: true, user, message: "Utente creato con successo" }
-    }
-
-    async login(email, password) {
-        const user = this.getUser(email)
-
-        if (!user) {
-            return { success: false, user: null, message: "Utente non trovato" }
-        }
-
-        if (!user.verified) {
-            return { success: false, user, message: "Email non verificata" }
-        }
-
-        if (await comparePasswords(password, user.password)) {
-            return { success: true, user, message: "Login riuscito" }
-        }
-
-        return { success: false, user, message: "Password errata" }
-    }
+    return { success: true, user, message: "Login riuscito" }
+  }
 }
 
 module.exports = UsersComponent

@@ -3,11 +3,24 @@ const { join } = require("path")
 const configs = require("./configs")
 const UsersComponent = require("./UsersComponent")
 const EmailComponent = require("./EmailComponent")
+const { connectToDatabase } = require("./db")
 
-const server = Fastify({ logger: false })
-const usersComponent = new UsersComponent("./state.json")
+const server = new Fastify({ logger: false })
+const usersComponent = new UsersComponent()
 const emailComponent = new EmailComponent()
 
+async function main() {
+    await connectToDatabase()
+  
+    server.listen({ port: configs.PORT, host: configs.SITE_HOST }, (err, address) => {
+      if (err) {
+        console.error(err)
+        process.exit(1)
+      }
+      console.log(`Server listening on ${address}`)
+    })
+  }
+  
 server.register(require("@fastify/static"), {
     root: join(__dirname, "../public"),
 })
@@ -32,11 +45,16 @@ server.get("/signup", async (request, reply) => {
 })
 
 server.post("/signup", async (request, reply) => {
-    const result = await usersComponent.create(request.body.email, request.body.password)
-    if (result.success) {
-        emailComponent.sendConfirmationEmail(result.user.email, result.user.token)
+    try {
+        const result = await usersComponent.create(request.body.email, request.body.password)
+        if (result.success) {
+            emailComponent.sendConfirmationEmail(result.user.email, result.user.token)
+        }
+        return reply.send(result)
+    } catch (err) {
+        console.error("Errore in /signup:", err)
+        return reply.status(500).send({ success: false, message: "Errore interno del server" })
     }
-    return reply.send(result)
 })
 
 server.get("/welcome", async (request, reply) => {
@@ -51,28 +69,28 @@ server.get("/signup-confirmation", async (request, reply) => {
 
 server.get("/verify-email", async (request, reply) => {
     const { token } = request.query
-    const result = usersComponent.getUserFromToken(token)
+    const result = await usersComponent.getUserFromToken(token)
     return reply.sendFile(result.success ? "html/verifiedEmail.html" : "html/invalidLink.html")
 })
 
 server.post("/verify-email", async (request, reply) => {
     const { token } = request.body
-    const result = usersComponent.getUserFromToken(token)
+    const result = await usersComponent.getUserFromToken(token)
     if (!result.success) return reply.send({ status: "error" })
     if (result.user.verified) {
-        usersComponent.invalidateUserToken(result.user.email)
+        await usersComponent.invalidateUserToken(result.user.email)
         return reply.send({ status: "already_verified", email: result.user.email })
     }
-    usersComponent.updateVerificationStatus(result.user.email, true)
+    await usersComponent.updateVerificationStatus(result.user.email, true)
     return reply.send({ status: "success", email: result.user.email })
 })
 
 server.post("/resend-email", async (request, reply) => {
     const { email } = request.body
-    const user = usersComponent.getUser(email)
+    const user = await usersComponent.getUser(email)
     if (!user) return reply.send({ success: false, message: "Utente non trovato" })
-    usersComponent.setUserToken(user.email)
-    emailComponent.sendConfirmationEmail(user.email, user.token)
+    const result = await usersComponent.setUserToken(user.email)
+    await emailComponent.sendConfirmationEmail(user.email, result.token)
     return reply.send({ success: true, message: "Email di conferma inviata nuovamente" })
 })
 
@@ -82,25 +100,26 @@ server.get("/forgot-password", async (request, reply) => {
 
 server.post("/forgot-password", async (request, reply) => {
     const { email } = request.body
-    const user = usersComponent.getUser(email)
+    const user = await usersComponent.getUser(email)
+    console.log("in forgot-password, user: ", user)
     if (user?.verified) {
-        usersComponent.setUserToken(email)
-        emailComponent.sendResetPasswordEmail(email, user.token)
+        const result = await usersComponent.setUserToken(email)
+        emailComponent.sendResetPasswordEmail(email, result.token)
     }
     return reply.send({ message: "Se l'indirizzo è corretto un'email per il reset è stata inviata" })
 })
 
 server.get("/reset-password", async (request, reply) => {
     const { token } = request.query
-    const result = usersComponent.getUserFromToken(token)
+    const result = await usersComponent.getUserFromToken(token)
     return reply.sendFile(result.success ? "html/resetPassword.html" : "html/invalidLink.html")
 })
 
 server.post("/reset-password", async (request, reply) => {
     const { token, password } = request.body
-    const result = usersComponent.getUserFromToken(token)
+    const result = await usersComponent.getUserFromToken(token)
     if (!result.success) return reply.send({ success: false, message: "Link non valido o scaduto" })
-    usersComponent.updateUserPassword(result.user.email, password)
+    await usersComponent.updateUserPassword(result.user.email, password)
     return reply.send({ success: true, message: "Nuova password impostata" })
 })
 
@@ -108,10 +127,4 @@ server.setNotFoundHandler((request, reply) => {
     return reply.status(404).sendFile("html/404.html")
 })
 
-server.listen({ port: configs.PORT, host: configs.SITE_URL }, (err, address) => {
-    if (err) {
-        console.error(err)
-        process.exit(1)
-    }
-    console.log(`Server listening on ${address}`)
-})
+main()
