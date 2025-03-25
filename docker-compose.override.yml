@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: node-container
     ports:
-      - "8080:8080"
+      - "${PORT}:${PORT}"
     volumes:
       - .:/usr/src/app      # Mount della cartella locale nel container
       - /usr/src/app/node_modules  # Per non sovrascrivere node_modules
