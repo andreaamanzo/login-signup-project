@@ -14,7 +14,7 @@ const pool = mysql.createPool({
 async function connectToDatabase() {
   try {
     await pool.query("SELECT 1")
-    console.log("Connesso al database con pool!")
+    console.log("Connesso al database con pool")
 
     // Creazione tabella se non esiste
     await pool.query(`
@@ -26,7 +26,7 @@ async function connectToDatabase() {
       )
     `)
 
-    console.log("Tabella utenti pronta!")
+    console.log("Tabella utenti pronta")
   } catch (err) {
     console.error("Errore di connessione al database:", err.message)
     process.exit(1)

@@ -101,7 +101,6 @@ server.get("/forgot-password", async (request, reply) => {
 server.post("/forgot-password", async (request, reply) => {
     const { email } = request.body
     const user = await usersComponent.getUser(email)
-    console.log("in forgot-password, user: ", user)
     if (user?.verified) {
         const result = await usersComponent.setUserToken(email)
         emailComponent.sendResetPasswordEmail(email, result.token)

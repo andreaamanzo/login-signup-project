@@ -57,7 +57,7 @@ resetPasswordForm.addEventListener("submit", async (event) => {
             toastr.error("Errore inaspettato.")
         } finally {
             resetPasswordButton.disabled = false
-            resetPasswordButton.innerHTML = "Registrati"
+            resetPasswordButton.innerHTML = "Imposta password"
             resetPasswordForm.style.opacity = 1
         }
     }, 600)
@@ -86,6 +86,12 @@ infoIcon.addEventListener("mouseleave", () => {
 })
 
 resetPasswordConfirmPasswordField.addEventListener("input", () => {
+    if (checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField)) {
+        setPasswordError(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, false)
+    }
+})
+
+resetPasswordPasswordField.addEventListener("input", () => {
     if (checkPasswords(resetPasswordPasswordField, resetPasswordConfirmPasswordField)) {
         setPasswordError(resetPasswordPasswordField, resetPasswordConfirmPasswordField, confirmPasswordMessage, false)
     }

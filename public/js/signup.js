@@ -89,3 +89,9 @@ signupConfirmPasswordField.addEventListener("input", () => {
         setPasswordError(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, false)
     }
 })
+
+signupPasswordField.addEventListener("input", () => {
+    if (checkPasswords(signupPasswordField, signupConfirmPasswordField)) {
+        setPasswordError(signupPasswordField, signupConfirmPasswordField, confirmPasswordMessage, false)
+    }
+})

@@ -3,24 +3,16 @@ const { pool } = require("./db")
 
 class UsersComponent {
   async getUser(email) {
-    console.log("in get user")
-    try {
-        const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
-        return rows[0] || null
-    } catch (err) {
-        console.log("error in get user: ", err)
-    }
+      const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+      return rows[0] || null
   }
 
   async getUserFromToken(token) {
     const result = decodeToken(token)
-    console.log(result)
     if (!result.success) return { success: false, user: null }
 
     const email = result.decoded.email
     const [rows] = await pool.query("SELECT * FROM users WHERE email = ? AND token = ?", [email, token])
-    console.log("rows: ", rows)
-    console.log("fine rows")
     if (rows.length === 0) return { success: false, user: null }
     return { success: true, user: rows[0] }
   }
@@ -52,9 +44,7 @@ class UsersComponent {
   }
 
   async create(email, password) {
-    console.log("in create")
     const existingUser = await this.getUser(email)
-    console.log(existingUser)
     if (existingUser) return { success: false, user: null, message: "Email già in uso" }
 
     const hashedPassword = await hashPassword(password)
