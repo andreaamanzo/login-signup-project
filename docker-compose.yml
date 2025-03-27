@@ -1,31 +1,28 @@
 services:
-  node-app:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: node-container
+    container_name: login-signup-project
+    env_file:
+      - .env
     ports:
       - "${PORT}:${PORT}"
     depends_on:
-      - mysql-container
-    networks:
-      - my-network 
-
-  mysql-container:
-    image: mysql:8.0
-    container_name: mysql-container
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      - mysql
+  mysql:
+    image: mysql
+    container_name: ${DB_HOST}
     ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - my-network 
-
-networks:
-  my-network:
-
-volumes:
-  mysql-data:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - 8081:80
+    environment:
+      - PMA_HOST=mysql
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}

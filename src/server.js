@@ -3,23 +3,25 @@ const { join } = require("path")
 const configs = require("./configs")
 const UsersComponent = require("./UsersComponent")
 const EmailComponent = require("./EmailComponent")
-const { connectToDatabase } = require("./db")
+const { waitForDatabase, initializeDatabase } = require('./db')
 
 const server = new Fastify({ logger: false })
 const usersComponent = new UsersComponent()
 const emailComponent = new EmailComponent()
 
+
 async function main() {
-    await connectToDatabase()
+    await waitForDatabase()
+    await initializeDatabase()
   
     server.listen({ port: configs.PORT, host: configs.SITE_HOST }, (err, address) => {
-      if (err) {
-        console.error(err)
-        process.exit(1)
-      }
-      console.log(`Server listening on ${address}`)
+        if (err) {
+            console.error(err)
+            process.exit(1)
+        }
+        console.log(`Server listening on ${address}`)
     })
-  }
+}
   
 server.register(require("@fastify/static"), {
     root: join(__dirname, "../public"),
