@@ -9,7 +9,8 @@ services:
     ports:
       - "${PORT}:${PORT}"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql
@@ -21,6 +22,12 @@ services:
       - MYSQL_DATABASE=${DB_NAME}
     volumes:
       - db-data:/var/lib/mysql/
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   phpmyadmin:
     image: phpmyadmin
