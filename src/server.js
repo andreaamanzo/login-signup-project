@@ -3,7 +3,7 @@ const { join } = require("path")
 const configs = require("./configs")
 const UsersComponent = require("./UsersComponent")
 const EmailComponent = require("./EmailComponent")
-const { waitForDatabase, initializeDatabase } = require('./db')
+const { waitForDatabase } = require('./db')
 
 const server = new Fastify({ logger: false })
 const usersComponent = new UsersComponent()
@@ -12,7 +12,6 @@ const emailComponent = new EmailComponent()
 
 async function main() {
     await waitForDatabase()
-    await initializeDatabase()
   
     server.listen({ port: configs.PORT, host: configs.SITE_HOST }, (err, address) => {
         if (err) {

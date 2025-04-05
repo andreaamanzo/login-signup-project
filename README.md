@@ -38,15 +38,16 @@ cp .env.example .env
 3. Fill in your `.env` file:
 
 ```env
-EMAIL='your_email_here'
-EMAIL_PASSWORD='your_app_password_here'
-JWT_SECRET='your_random_jwt_secret'
-SITE_HOST='0.0.0.0'
-PORT='8080'
-DB_HOST='your_mysql_host_name'
-DB_USER='root'
-DB_PASSWORD='your_mysql_password'
-DB_NAME='your_database_name'
+EMAIL=your_email@example.com
+EMAIL_PASSWORD=your_app_password
+JWT_SECRET=your_secure_jwt_secret
+SITE_HOST=0.0.0.0
+PORT=8080
+DB_HOST=mysql
+DB_NAME=login-signup-project-db
+DB_USER=user
+DB_USER_PASSWORD=your_db_user_password
+DB_ROOT_PASSWORD=your_mysql_root_password
 ```
 
 ---
