@@ -57,7 +57,7 @@ DB_ROOT_PASSWORD=your_mysql_root_password
 To start the app and the MySQL database with Docker:
 
 ```bash
-sudo docker compose up --build
+docker compose up --build
 ```
 
 - The backend will be available at: [http://localhost:8080](http://localhost:8080)
